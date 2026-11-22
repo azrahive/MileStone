@@ -36,6 +36,7 @@ class TaskUpdate(BaseModel):
     notes: Optional[str] = None
     sort_order: Optional[int] = None
     is_archived: Optional[bool] = None
+    archived_at: Optional[datetime] = None
     tag_ids: Optional[List[str]] = None
 
 
@@ -50,6 +51,7 @@ class TaskResponse(TaskBase):
     user_id: str
     completion_date: Optional[datetime] = None
     is_archived: bool
+    archived_at: Optional[datetime] = None
     created_at: datetime
     updated_at: datetime
     subtasks: List[SubtaskResponse] = []

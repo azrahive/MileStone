@@ -39,6 +39,7 @@ class Task(Base):
     sort_order = Column(Integer, default=0)
     notes = Column(Text, nullable=True)
     is_archived = Column(Boolean, default=False, index=True)
+    archived_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), default=utc_now)
     updated_at = Column(DateTime(timezone=True), default=utc_now, onupdate=utc_now)
 

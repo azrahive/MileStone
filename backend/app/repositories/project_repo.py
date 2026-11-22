@@ -1,4 +1,5 @@
 from typing import List, Optional
+from datetime import datetime, timezone
 from sqlalchemy import or_, desc, asc
 from sqlalchemy.orm import Session
 from app.models.project import Project
@@ -95,6 +96,7 @@ class ProjectRepository:
     def archive(self, project: Project) -> Project:
         project.is_archived = True
         project.status = "ARCHIVED"
+        project.archived_at = datetime.now(timezone.utc)
         self.db.commit()
         self.db.refresh(project)
         return project
@@ -102,6 +104,7 @@ class ProjectRepository:
     def restore(self, project: Project) -> Project:
         project.is_archived = False
         project.status = "ACTIVE"
+        project.archived_at = None
         self.db.commit()
         self.db.refresh(project)
         return project

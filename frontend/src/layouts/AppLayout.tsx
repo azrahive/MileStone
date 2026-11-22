@@ -77,14 +77,16 @@ export const AppLayout: React.FC = () => {
   const handleConfirmDeleteTask = async () => {
     if (!taskToDelete) return;
     try {
-      await api.tasks.delete(taskToDelete);
+      await api.tasks.delete(taskToDelete, false);
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
+      queryClient.invalidateQueries({ queryKey: ['archive'] });
+      queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });
       setSelectedTask(null);
       setTaskToDelete(null);
     } catch (e) {
-      console.error('Failed to delete task:', e);
+      console.error('Failed to archive task:', e);
     }
   };
 
@@ -160,10 +162,10 @@ export const AppLayout: React.FC = () => {
 
       <ConfirmDialog
         isOpen={!!taskToDelete}
-        title="Delete Task"
-        message="Are you sure you want to delete this task? This action cannot be undone."
-        confirmLabel="Delete Task"
-        isDestructive={true}
+        title="Move Task to Archive Vault"
+        message="This task will be moved to the Archive Vault and hidden from your active workspace views. You can restore it back anytime."
+        confirmLabel="Move to Archive"
+        isDestructive={false}
         onConfirm={handleConfirmDeleteTask}
         onCancel={() => setTaskToDelete(null)}
       />

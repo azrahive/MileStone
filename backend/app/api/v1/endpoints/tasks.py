@@ -134,9 +134,10 @@ def restore_task(
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_task(
     task_id: str,
+    permanent: bool = False,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     service = TaskService(db)
-    service.delete(task_id, current_user.id)
+    service.delete(task_id, current_user.id, permanent=permanent)
     return None

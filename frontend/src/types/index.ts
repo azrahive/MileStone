@@ -56,6 +56,7 @@ export interface Task {
   sort_order: number;
   notes?: string;
   is_archived: boolean;
+  archived_at?: string;
   created_at: string;
   updated_at: string;
   subtasks: Subtask[];
@@ -81,6 +82,7 @@ export interface Project {
   status: ProjectStatus;
   sort_order: number;
   is_archived: boolean;
+  archived_at?: string;
   created_at: string;
   updated_at: string;
   category?: Category;

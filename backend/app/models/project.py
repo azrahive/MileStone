@@ -29,6 +29,7 @@ class Project(Base):
     status = Column(String(30), default="ACTIVE", index=True)    # ACTIVE, ON_HOLD, COMPLETED, ARCHIVED
     sort_order = Column(Integer, default=0)
     is_archived = Column(Boolean, default=False, index=True)
+    archived_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), default=utc_now)
     updated_at = Column(DateTime(timezone=True), default=utc_now, onupdate=utc_now)
 

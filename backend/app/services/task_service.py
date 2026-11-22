@@ -221,9 +221,10 @@ class TaskService:
         if not task:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
         task.is_archived = True
+        task.archived_at = utc_now()
         self.db.commit()
         self.db.refresh(task)
-        self.activity_repo.log(user_id, "TASK", task.id, "ARCHIVED", task.title, "Task archived")
+        self.activity_repo.log(user_id, "TASK", task.id, "ARCHIVED", task.title, "Task moved to Archive Vault")
         return self._enrich_task(task)
 
     def restore(self, task_id: str, user_id: str) -> TaskResponse:
@@ -231,18 +232,24 @@ class TaskService:
         if not task:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
         task.is_archived = False
+        task.archived_at = None
         self.db.commit()
         self.db.refresh(task)
         self.activity_repo.log(user_id, "TASK", task.id, "RESTORED", task.title, "Task restored from archive")
         return self._enrich_task(task)
 
-    def delete(self, task_id: str, user_id: str) -> None:
+    def delete(self, task_id: str, user_id: str, permanent: bool = False) -> None:
         task = self.task_repo.get_by_id(task_id, user_id)
         if not task:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
-        title = task.title
-        self.task_repo.delete(task)
-        self.activity_repo.log(user_id, "TASK", task_id, "DELETED", title, f"Task '{title}' was deleted")
+        if not permanent:
+            # Soft-delete to archive vault
+            self.archive(task_id, user_id)
+        else:
+            # Permanent removal
+            title = task.title
+            self.task_repo.delete(task)
+            self.activity_repo.log(user_id, "TASK", task_id, "DELETED", title, f"Task '{title}' was permanently deleted")
 
     def _handle_recurrence_on_complete(self, task: Task, user_id: str):
         rec = self.rec_repo.get_by_task_id(task.id, user_id)

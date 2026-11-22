@@ -87,9 +87,10 @@ def restore_project(
 @router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_project(
     project_id: str,
+    permanent: bool = False,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     service = ProjectService(db)
-    service.delete(project_id, current_user.id)
+    service.delete(project_id, current_user.id, permanent=permanent)
     return None

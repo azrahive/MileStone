@@ -22,9 +22,11 @@ def get_archive(
 
     archived_projects = project_service.get_all(current_user.id, include_archived=True)
     archived_projects = [p for p in archived_projects if p.is_archived]
+    archived_projects.sort(key=lambda p: (p.archived_at or p.updated_at), reverse=True)
 
     archived_tasks = task_service.get_all(current_user.id, include_archived=True)
     archived_tasks = [t for t in archived_tasks if t.is_archived]
+    archived_tasks.sort(key=lambda t: (t.archived_at or t.updated_at), reverse=True)
 
     return {
         "projects": archived_projects,

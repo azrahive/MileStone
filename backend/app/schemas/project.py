@@ -33,12 +33,14 @@ class ProjectUpdate(BaseModel):
     status: Optional[str] = None
     sort_order: Optional[int] = None
     is_archived: Optional[bool] = None
+    archived_at: Optional[datetime] = None
 
 
 class ProjectResponse(ProjectBase):
     id: str
     user_id: str
     is_archived: bool
+    archived_at: Optional[datetime] = None
     created_at: datetime
     updated_at: datetime
     category: Optional[CategoryResponse] = None

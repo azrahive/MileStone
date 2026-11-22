@@ -142,8 +142,8 @@ export const api = {
       request<Project>(`/projects/${id}/archive`, { method: 'POST' }),
     restore: (id: string) =>
       request<Project>(`/projects/${id}/restore`, { method: 'POST' }),
-    delete: (id: string) =>
-      request<void>(`/projects/${id}`, { method: 'DELETE' }),
+    delete: (id: string, permanent: boolean = false) =>
+      request<void>(`/projects/${id}${permanent ? '?permanent=true' : ''}`, { method: 'DELETE' }),
   },
 
   // Tasks
@@ -197,7 +197,8 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(data),
       }),
-    delete: (id: string) => request<void>(`/tasks/${id}`, { method: 'DELETE' }),
+    delete: (id: string, permanent: boolean = false) =>
+      request<void>(`/tasks/${id}${permanent ? '?permanent=true' : ''}`, { method: 'DELETE' }),
   },
 
   // Subtasks

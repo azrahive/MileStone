@@ -133,17 +133,22 @@ class ProjectService:
         )
         return self._enrich_project(restored)
 
-    def delete(self, project_id: str, user_id: str) -> None:
+    def delete(self, project_id: str, user_id: str, permanent: bool = False) -> None:
         project = self.project_repo.get_by_id(project_id, user_id)
         if not project:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
-        title = project.title
-        self.project_repo.delete(project)
-        self.activity_repo.log(
-            user_id=user_id,
-            entity_type="PROJECT",
-            entity_id=project_id,
-            entity_title=title,
-            action="DELETED",
-            details=f"Project '{title}' was permanently deleted"
-        )
+        if not permanent:
+            # Soft-delete to archive vault
+            self.archive(project_id, user_id)
+        else:
+            # Permanent removal
+            title = project.title
+            self.project_repo.delete(project)
+            self.activity_repo.log(
+                user_id=user_id,
+                entity_type="PROJECT",
+                entity_id=project_id,
+                entity_title=title,
+                action="DELETED",
+                details=f"Project '{title}' was permanently deleted"
+            )

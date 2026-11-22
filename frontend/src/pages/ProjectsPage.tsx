@@ -50,11 +50,12 @@ export const ProjectsPage: React.FC = () => {
     },
   });
 
-  // Delete mutation
+  // Delete mutation (soft-deletes to Archive Vault)
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => api.projects.delete(id),
+    mutationFn: (id: string) => api.projects.delete(id, false),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['archive'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
       setProjectToDelete(null);
     },
@@ -252,13 +253,13 @@ export const ProjectsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete/Archive Confirmation Dialog */}
       <ConfirmDialog
         isOpen={!!projectToDelete}
-        title="Delete Project?"
-        message="Deleting this project will permanently remove the project and its tasks. This action cannot be undone."
-        confirmLabel="Delete Project"
-        isDestructive={true}
+        title="Move Project to Archive Vault?"
+        message="This project and its tasks will be moved to the Archive Vault and hidden from your active projects list. You can restore it back anytime."
+        confirmLabel="Move to Archive Vault"
+        isDestructive={false}
         onConfirm={() => projectToDelete && deleteMutation.mutate(projectToDelete)}
         onCancel={() => setProjectToDelete(null)}
       />
