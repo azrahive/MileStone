@@ -36,3 +36,27 @@ def test_register_and_login(client):
         json={"email": "alice@example.com", "password": "wrongpassword"}
     )
     assert bad_login.status_code == 401
+
+    # Update profile
+    update_resp = client.put(
+        "/api/v1/auth/profile",
+        json={"full_name": "Alice Cooper"},
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    assert update_resp.status_code == 200
+    assert update_resp.json()["full_name"] == "Alice Cooper"
+
+    # Change password
+    pwd_resp = client.put(
+        "/api/v1/auth/password",
+        json={"current_password": "SecretPassword123", "new_password": "NewSecretPassword456"},
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    assert pwd_resp.status_code == 200
+
+    # Login with new password
+    new_login_resp = client.post(
+        "/api/v1/auth/login",
+        json={"email": "alice@example.com", "password": "NewSecretPassword456"}
+    )
+    assert new_login_resp.status_code == 200

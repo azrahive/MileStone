@@ -106,6 +106,16 @@ export const api = {
         body: JSON.stringify(data),
       }),
     me: () => request<User>('/auth/me'),
+    updateProfile: (data: { full_name?: string; email?: string }) =>
+      request<User>('/auth/profile', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+    changePassword: (data: { current_password: string; new_password: string }) =>
+      request<{ message: string }>('/auth/password', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
   },
 
   // Projects

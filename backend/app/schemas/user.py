@@ -22,6 +22,16 @@ class UserUpdate(BaseModel):
     password: Optional[str] = None
 
 
+class ProfileUpdate(BaseModel):
+    full_name: Optional[str] = None
+    email: Optional[EmailStr] = None
+
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str
+
+
 class UserResponse(UserBase):
     id: str
     is_active: bool

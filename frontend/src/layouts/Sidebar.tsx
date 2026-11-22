@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -15,9 +15,11 @@ import {
   Plus,
   LogOut,
   ChevronRight,
+  Pencil,
 } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { Project } from '../types';
+import { EditProfileModal } from '../components/EditProfileModal';
 
 interface SidebarProps {
   projects: Project[];
@@ -36,6 +38,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -178,24 +181,50 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* User Card & Logout Footer */}
       <div className="mt-auto p-3 border-t border-slate-200/80 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-950/40 flex-shrink-0">
-        <div className="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300 font-bold flex items-center justify-center text-xs flex-shrink-0">
-              {user?.full_name ? user.full_name[0].toUpperCase() : 'U'}
+        <div
+          onClick={() => setIsEditProfileOpen(true)}
+          className="flex items-center justify-between p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-xs hover:shadow-md hover:border-indigo-300/70 dark:hover:border-indigo-500/40 cursor-pointer transition-all duration-200 group"
+          title="Click to edit profile & security"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            {/* Circular Avatar with online dot */}
+            <div className="relative flex-shrink-0">
+              {user?.avatar || user?.avatar_url ? (
+                <img
+                  src={user.avatar || user.avatar_url}
+                  alt={user.full_name || 'User'}
+                  className="w-9 h-9 rounded-full object-cover border border-indigo-200 dark:border-indigo-800 shadow-xs"
+                />
+              ) : (
+                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-500 via-indigo-600 to-violet-600 text-white font-bold flex items-center justify-center text-xs shadow-xs">
+                  {user?.full_name ? user.full_name[0].toUpperCase() : 'U'}
+                </div>
+              )}
+              {/* Green online dot on bottom-right corner */}
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
             </div>
+
+            {/* Name, Email, and hover pencil indicator */}
             <div className="min-w-0 truncate">
-              <p className="text-xs font-semibold text-slate-900 dark:text-white truncate">
-                {user?.full_name || 'My Account'}
-              </p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+              <div className="flex items-center gap-1.5">
+                <p className="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  {user?.full_name || 'My Account'}
+                </p>
+                <Pencil className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
                 {user?.email}
               </p>
             </div>
           </div>
 
+          {/* Logout button with stopPropagation */}
           <button
-            onClick={handleLogout}
-            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors flex-shrink-0"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleLogout();
+            }}
+            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors flex-shrink-0 ml-1.5"
             title="Log Out"
           >
             <LogOut className="w-4 h-4" />
@@ -224,6 +253,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
       )}
+      {/* Edit Profile & Security Modal */}
+      <EditProfileModal
+        isOpen={isEditProfileOpen}
+        onClose={() => setIsEditProfileOpen(false)}
+      />
     </>
   );
 };
