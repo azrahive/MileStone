@@ -145,15 +145,15 @@ export const TasksPage: React.FC = () => {
       {/* View Switcher Tabs */}
       <div className="flex p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 max-w-md">
         <button
-          onClick={() => handleTabChange('pending')}
+          onClick={() => handleTabChange('all')}
           className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
-            activeTab === 'pending'
-              ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
+            activeTab === 'all'
+              ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Clock className="w-3.5 h-3.5" />
-          <span>Pending</span>
+          <ListTodo className="w-3.5 h-3.5" />
+          <span>All Tasks</span>
         </button>
         <button
           onClick={() => handleTabChange('completed')}
@@ -167,15 +167,15 @@ export const TasksPage: React.FC = () => {
           <span>Completed</span>
         </button>
         <button
-          onClick={() => handleTabChange('all')}
+          onClick={() => handleTabChange('pending')}
           className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
-            activeTab === 'all'
-              ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+            activeTab === 'pending'
+              ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <ListTodo className="w-3.5 h-3.5" />
-          <span>All Tasks</span>
+          <Clock className="w-3.5 h-3.5" />
+          <span>Pending</span>
         </button>
       </div>
 
