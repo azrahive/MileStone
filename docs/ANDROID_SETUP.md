@@ -1,6 +1,6 @@
-# SmartTask — Android APK Build & Installation Guide
+# MileStone — Android APK Build & Installation Guide
 
-SmartTask packages the modern React web application into a native Android container using **Capacitor**, providing hardware back-button support, status bar theming, and local notifications.
+MileStone packages the modern React web application into a native Android container using **Capacitor**, providing hardware back-button support, status bar theming, and local notifications.
 
 ---
 

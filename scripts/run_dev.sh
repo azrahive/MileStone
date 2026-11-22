@@ -4,13 +4,13 @@ set -e
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 echo "=================================================="
-echo "🌟 SmartTask: Personal Productivity Management"
+echo "🌟 MileStone: Personal Productivity Management"
 echo "=================================================="
 
 # Function to clean up background processes on exit
 cleanup() {
     echo ""
-    echo "🛑 Shutting down SmartTask services..."
+    echo "🛑 Shutting down MileStone services..."
     kill $(jobs -p) 2>/dev/null || true
     exit 0
 }

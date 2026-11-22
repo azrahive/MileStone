@@ -27,7 +27,7 @@ export const useProjectFilterStore = create<ProjectFilterState>()(
       },
     }),
     {
-      name: 'smarttask-project-filters',
+      name: 'milestone-project-filters',
     }
   )
 );

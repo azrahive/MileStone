@@ -1,13 +1,13 @@
-# SmartTask — Personal Productivity & Task Management System
+# MileStone — Personal Productivity & Task Management System
 
-![SmartTask Banner](https://img.shields.io/badge/SmartTask-v1.0.0-indigo?style=for-the-badge)
+![MileStone Banner](https://img.shields.io/badge/MileStone-v1.0.0-indigo?style=for-the-badge)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.12+-blue?style=for-the-badge&logo=python&logoColor=white)
 ![React](https://img.shields.io/badge/React-18+-61dafb?style=for-the-badge&logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178c6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Capacitor](https://img.shields.io/badge/Capacitor-Android-119eff?style=for-the-badge&logo=capacitor&logoColor=white)
 
-> **SmartTask** is an enterprise-grade personal productivity and project/task management platform designed to operate seamlessly across desktop browsers, mobile browsers, and native Android (via Capacitor).
+> **MileStone** is an enterprise-grade personal productivity and project/task management platform designed to operate seamlessly across desktop browsers, mobile browsers, and native Android (via Capacitor).
 
 ---
 

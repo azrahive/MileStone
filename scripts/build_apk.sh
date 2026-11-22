@@ -4,7 +4,7 @@ set -e
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 echo "=================================================="
-echo "🤖 Building SmartTask Android APK via Capacitor"
+echo "🤖 Building MileStone Android APK via Capacitor"
 echo "=================================================="
 
 # Detect or set JAVA_HOME

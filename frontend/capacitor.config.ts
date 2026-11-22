@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.smarttask.app',
-  appName: 'SmartTask',
+  appName: 'MileStone',
   webDir: 'dist',
   server: {
     androidScheme: 'https',

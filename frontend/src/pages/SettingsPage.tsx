@@ -53,7 +53,7 @@ export const SettingsPage: React.FC = () => {
         setTestStatus({
           tested: true,
           success: true,
-          message: `Connection successful! Server: ${data.app || 'SmartTask'} (v${data.version || '1.0'})`,
+          message: `Connection successful! Server: ${data.app || 'MileStone'} (v${data.version || '1.0'})`,
         });
         setApiBaseUrl(target);
       } else {
@@ -94,7 +94,7 @@ export const SettingsPage: React.FC = () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `smarttask_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      a.download = `milestone_backup_${new Date().toISOString().slice(0, 10)}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -137,7 +137,7 @@ export const SettingsPage: React.FC = () => {
     if (granted) {
       await notificationService.scheduleNotification(
         1,
-        'SmartTask Notifications Enabled',
+        'MileStone Notifications Enabled',
         'You will now receive upcoming deadline and focus alerts!'
       );
     }
@@ -262,7 +262,7 @@ export const SettingsPage: React.FC = () => {
               • <strong>Physical Android Phone (Local Wi-Fi)</strong>: Use your MacBook's LAN IP address (e.g. <code className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono">http://192.168.x.x:8000</code>).
             </p>
             <p>
-              • <strong>Remote Cloud / VPS</strong>: Use your public HTTPS domain (e.g. <code className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono">https://smarttask.yourdomain.com</code>).
+              • <strong>Remote Cloud / VPS</strong>: Use your public HTTPS domain (e.g. <code className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono">https://milestone.yourdomain.com</code>).
             </p>
           </div>
         </div>
@@ -370,7 +370,7 @@ export const SettingsPage: React.FC = () => {
           <Smartphone className="w-4 h-4 text-slate-400" />
           <span>Platform: {isNative ? 'Capacitor Android Native Container' : 'Modern Web Browser'}</span>
         </div>
-        <span>SmartTask v1.0.0 (Production Architecture)</span>
+        <span>MileStone v1.0.0 (Production Architecture)</span>
       </div>
     </div>
   );

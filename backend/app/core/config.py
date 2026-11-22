@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "SmartTask"
+    PROJECT_NAME: str = "MileStone"
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = "smarttask_dev_secret_key_849203847592038495029384750293847"
     ALGORITHM: str = "HS256"

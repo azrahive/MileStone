@@ -1,0 +1,15 @@
+{
+  "short_name": "MileStone",
+  "name": "MileStone — Personal Productivity & Task Management System",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0b0f19",
+  "theme_color": "#4f46e5",
+  "display": "standalone"
+}

@@ -22,7 +22,9 @@ interface SyncState {
 }
 
 export const useSyncStore = create<SyncState>((set, get) => {
-  const savedQueue = localStorage.getItem('smarttask_offline_queue');
+  const savedQueue =
+    localStorage.getItem('milestone_offline_queue') ||
+    localStorage.getItem('smarttask_offline_queue');
   let initialQueue: QueuedMutation[] = [];
   if (savedQueue) {
     try {
@@ -48,18 +50,19 @@ export const useSyncStore = create<SyncState>((set, get) => {
         timestamp: Date.now(),
       };
       const updated = [...get().queuedMutations, item];
-      localStorage.setItem('smarttask_offline_queue', JSON.stringify(updated));
+      localStorage.setItem('milestone_offline_queue', JSON.stringify(updated));
       set({ queuedMutations: updated });
     },
 
     clearQueue: () => {
+      localStorage.removeItem('milestone_offline_queue');
       localStorage.removeItem('smarttask_offline_queue');
       set({ queuedMutations: [] });
     },
 
     removeMutation: (id: string) => {
       const updated = get().queuedMutations.filter((m) => m.id !== id);
-      localStorage.setItem('smarttask_offline_queue', JSON.stringify(updated));
+      localStorage.setItem('milestone_offline_queue', JSON.stringify(updated));
       set({ queuedMutations: updated });
     },
 

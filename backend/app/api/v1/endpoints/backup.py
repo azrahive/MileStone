@@ -28,7 +28,7 @@ def export_tasks_csv(
     return Response(
         content=csv_data,
         media_type="text/csv",
-        headers={"Content-Disposition": "attachment; filename=smarttask_tasks.csv"}
+        headers={"Content-Disposition": "attachment; filename=milestone_tasks.csv"}
     )
 
 

@@ -2,7 +2,7 @@
 set -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-echo "🚀 Starting SmartTask Backend..."
+echo "🚀 Starting MileStone Backend..."
 cd "$DIR/backend"
 
 if [ -d ".venv" ]; then

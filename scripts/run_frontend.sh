@@ -2,7 +2,7 @@
 set -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-echo "⚡ Starting SmartTask Frontend..."
+echo "⚡ Starting MileStone Frontend..."
 cd "$DIR/frontend"
 
 # Start Vite dev server on port 5173

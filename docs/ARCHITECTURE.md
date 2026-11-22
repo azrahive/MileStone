@@ -1,7 +1,7 @@
-# SmartTask Architecture & System Design Documentation
+# MileStone Architecture & System Design Documentation
 
 ## 1. Architectural Philosophy
-SmartTask is built with a high-performance **modular service-repository pattern** on the backend and an **offline-first reactive state container** on the frontend, packaged natively for mobile via Capacitor.
+MileStone is built with a high-performance **modular service-repository pattern** on the backend and an **offline-first reactive state container** on the frontend, packaged natively for mobile via Capacitor.
 
 ```mermaid
 flowchart TB

@@ -66,11 +66,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Brand Logo Header */}
       <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-200/80 dark:border-slate-800/80">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 font-bold text-lg">
-          ST
+          MS
         </div>
         <div>
           <h1 className="text-base font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5">
-            SmartTask
+            MileStone
             <span className="text-[10px] uppercase font-semibold tracking-wider px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400">
               Pro
             </span>

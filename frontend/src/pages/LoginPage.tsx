@@ -44,8 +44,8 @@ export const LoginPage: React.FC = () => {
   };
 
   const fillDemoAccount = () => {
-    setEmail('demo@smarttask.local');
-    setPassword('SmartTask2026!');
+    setEmail('demo@milestone.local');
+    setPassword('MileStone2026!');
     setFullName('Demo User');
   };
 
@@ -55,10 +55,10 @@ export const LoginPage: React.FC = () => {
         {/* Brand Header */}
         <div className="text-center space-y-2">
           <div className="inline-flex w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 items-center justify-center text-white shadow-lg shadow-indigo-500/30 font-bold text-xl mb-2">
-            ST
+            MS
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            SmartTask
+            MileStone
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400">
             {isRegister

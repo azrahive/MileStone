@@ -1,6 +1,6 @@
-# SmartTask — Remote Server Deployment & Secure Access Guide
+# MileStone — Remote Server Deployment & Secure Access Guide
 
-This guide covers deploying SmartTask to a remote cloud VPS (e.g. DigitalOcean, AWS EC2, Hetzner, Linode) or securely accessing your local server from outside your home network.
+This guide covers deploying MileStone to a remote cloud VPS (e.g. DigitalOcean, AWS EC2, Hetzner, Linode) or securely accessing your local server from outside your home network.
 
 ---
 

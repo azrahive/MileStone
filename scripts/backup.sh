@@ -9,8 +9,8 @@ DB_FILE="$DIR/backend/smarttask.db"
 mkdir -p "$BACKUP_DIR"
 
 if [ -f "$DB_FILE" ]; then
-    cp "$DB_FILE" "$BACKUP_DIR/smarttask_backup_${TIMESTAMP}.db"
-    echo "✅ Database backup created at: $BACKUP_DIR/smarttask_backup_${TIMESTAMP}.db"
+    cp "$DB_FILE" "$BACKUP_DIR/milestone_backup_${TIMESTAMP}.db"
+    echo "✅ Database backup created at: $BACKUP_DIR/milestone_backup_${TIMESTAMP}.db"
 else
     echo "⚠️ Database file $DB_FILE does not exist yet. Run backend first."
 fi

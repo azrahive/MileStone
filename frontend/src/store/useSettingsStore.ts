@@ -25,8 +25,14 @@ function applyTheme(theme: ThemeMode) {
 }
 
 export const useSettingsStore = create<SettingsState>((set) => {
-  const savedTheme = (localStorage.getItem('smarttask_theme') as ThemeMode) || 'system';
-  const savedApiUrl = localStorage.getItem('smarttask_api_url') || DEFAULT_API_URL;
+  const savedTheme =
+    (localStorage.getItem('milestone_theme') as ThemeMode) ||
+    (localStorage.getItem('smarttask_theme') as ThemeMode) ||
+    'system';
+  const savedApiUrl =
+    localStorage.getItem('milestone_api_url') ||
+    localStorage.getItem('smarttask_api_url') ||
+    DEFAULT_API_URL;
 
   // Apply initial theme
   applyTheme(savedTheme);
@@ -34,7 +40,9 @@ export const useSettingsStore = create<SettingsState>((set) => {
   // Listen to system theme changes if theme is system
   if (window.matchMedia) {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-      const currentTheme = localStorage.getItem('smarttask_theme') as ThemeMode;
+      const currentTheme =
+        (localStorage.getItem('milestone_theme') as ThemeMode) ||
+        (localStorage.getItem('smarttask_theme') as ThemeMode);
       if (currentTheme === 'system' || !currentTheme) {
         applyTheme('system');
       }
@@ -46,7 +54,7 @@ export const useSettingsStore = create<SettingsState>((set) => {
     apiBaseUrl: savedApiUrl,
 
     setTheme: (theme: ThemeMode) => {
-      localStorage.setItem('smarttask_theme', theme);
+      localStorage.setItem('milestone_theme', theme);
       applyTheme(theme);
       set({ theme });
     },
@@ -56,11 +64,12 @@ export const useSettingsStore = create<SettingsState>((set) => {
       if (cleaned.endsWith('/')) {
         cleaned = cleaned.slice(0, -1);
       }
-      localStorage.setItem('smarttask_api_url', cleaned);
+      localStorage.setItem('milestone_api_url', cleaned);
       set({ apiBaseUrl: cleaned });
     },
 
     resetApiBaseUrl: () => {
+      localStorage.removeItem('milestone_api_url');
       localStorage.removeItem('smarttask_api_url');
       set({ apiBaseUrl: DEFAULT_API_URL });
     },

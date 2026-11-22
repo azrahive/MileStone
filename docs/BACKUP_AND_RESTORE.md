@@ -1,6 +1,6 @@
-# SmartTask — Database Backup & Restore Guide
+# MileStone — Database Backup & Restore Guide
 
-SmartTask provides built-in data backup and disaster recovery tools to safeguard all projects, tasks, subtasks, categories, and tags.
+MileStone provides built-in data backup and disaster recovery tools to safeguard all projects, tasks, subtasks, categories, and tags.
 
 ---
 

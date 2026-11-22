@@ -1,6 +1,6 @@
-# SmartTask — Local MacBook Setup Guide
+# MileStone — Local MacBook Setup Guide
 
-This guide walks through configuring and running SmartTask locally on macOS.
+This guide walks through configuring and running MileStone locally on macOS.
 
 ---
 
