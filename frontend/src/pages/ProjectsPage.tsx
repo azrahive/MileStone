@@ -175,7 +175,7 @@ export const ProjectsPage: React.FC = () => {
                   </div>
 
                   {project.description && (
-                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                    <p className="max-h-24 overflow-y-auto pr-1.5 text-xs text-slate-500 dark:text-slate-400 text-justify whitespace-pre-wrap break-words leading-relaxed description-scrollbar">
                       {project.description}
                     </p>
                   )}

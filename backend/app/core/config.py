@@ -7,12 +7,19 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     PROJECT_NAME: str = "MileStone"
     API_V1_STR: str = "/api/v1"
-    SECRET_KEY: str = "smarttask_dev_secret_key_849203847592038495029384750293847"
+    SECRET_KEY: str = "milestone_dev_secret_key_849203847592038495029384750293847"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
     
     # SQLite default, easily swapped with postgresql+psycopg2://user:pass@host:5432/dbname
-    DATABASE_URL: str = "sqlite:///./smarttask.db"
+    DATABASE_URL: str = "sqlite:///./milestone.db"
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def normalize_database_url(cls, value: str) -> str:
+        if value.startswith("postgres://"):
+            return f"postgresql://{value.removeprefix('postgres://')}"
+        return value
     
     BACKEND_CORS_ORIGINS: Union[List[str], str] = [
         "http://localhost:5173",

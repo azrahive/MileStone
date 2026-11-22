@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, Lock, Mail, User, AlertCircle, ArrowRight } from 'lucide-react';
+import { Lock, Mail, User, AlertCircle, ArrowRight } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuthStore } from '../store/useAuthStore';
 
 export const LoginPage: React.FC = () => {
+  const [showSplash, setShowSplash] = useState(
+    () => sessionStorage.getItem('milestone_splash_seen') !== 'true',
+  );
+  const [isSplashExiting, setIsSplashExiting] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,6 +18,19 @@ export const LoginPage: React.FC = () => {
 
   const { setAuth } = useAuthStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!showSplash) return;
+
+    sessionStorage.setItem('milestone_splash_seen', 'true');
+    const revealCardTimer = window.setTimeout(() => setIsSplashExiting(true), 4600);
+    const hideSplashTimer = window.setTimeout(() => setShowSplash(false), 5100);
+
+    return () => {
+      window.clearTimeout(revealCardTimer);
+      window.clearTimeout(hideSplashTimer);
+    };
+  }, [showSplash]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,15 +65,59 @@ export const LoginPage: React.FC = () => {
     setPassword('MileStone2026!');
     setFullName('Demo User');
   };
+  const isAuthCardVisible = !showSplash || isSplashExiting;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-100 dark:from-[#0b0f19] dark:via-[#111827] dark:to-[#0f172a] text-slate-900 dark:text-slate-100">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl overflow-hidden p-8 sm:p-10 space-y-6">
+    <div className="relative isolate min-h-screen flex items-center justify-center overflow-hidden p-4 bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-100 dark:from-[#0b0f19] dark:via-[#111827] dark:to-[#0f172a] text-slate-900 dark:text-slate-100">
+      <div aria-hidden="true" className="auth-orb auth-orb-one" />
+      <div aria-hidden="true" className="auth-orb auth-orb-two" />
+      {showSplash && (
+        <div
+          aria-hidden="true"
+          className={`auth-splash fixed inset-0 z-20 flex flex-col items-center justify-center ${
+            isSplashExiting
+              ? 'opacity-0 scale-95 pointer-events-none'
+              : 'opacity-100 scale-100'
+          }`}
+        >
+          <div className="auth-splash-glow" />
+          <img
+            src="/logo-mark.png"
+            alt=""
+            className="auth-splash-logo relative z-10 w-24 h-24 object-contain mix-blend-multiply dark:mix-blend-normal drop-shadow-[0_8px_20px_rgba(99,102,241,0.28)]"
+          />
+          <div className="auth-splash-copy relative z-10 mt-5 text-center">
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              MileStone
+            </h1>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              Personal Productivity
+            </p>
+            <div className="mx-auto mt-6 w-56 h-1.5 rounded-full bg-slate-200/70 dark:bg-slate-800 overflow-hidden">
+              <div className="auth-splash-progress h-full rounded-full" />
+            </div>
+            <p className="mt-3 text-xs font-medium tracking-wide text-slate-500 dark:text-slate-400">
+              Preparing your workspace...
+            </p>
+          </div>
+        </div>
+      )}
+      <div
+        aria-hidden={!isAuthCardVisible}
+        inert={!isAuthCardVisible}
+        className={`auth-card relative z-10 w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl overflow-hidden p-8 sm:p-10 space-y-6 transition-all duration-500 ease-out ${
+          isAuthCardVisible
+            ? 'opacity-100 translate-y-0 scale-100'
+            : 'opacity-0 translate-y-5 scale-[0.98] pointer-events-none'
+        }`}
+      >
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 items-center justify-center text-white shadow-lg shadow-indigo-500/30 font-bold text-xl mb-2">
-            MS
-          </div>
+          <img
+            src="/logo-mark.png"
+            alt="MileStone Logo"
+            className="auth-logo w-14 h-14 object-contain mx-auto mb-3 mix-blend-multiply dark:mix-blend-normal drop-shadow-[0_8px_20px_rgba(99,102,241,0.28)]"
+          />
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             MileStone
           </h1>
@@ -68,16 +129,22 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* Tab switch */}
-        <div className="flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold">
+        <div className="relative flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold">
+          <span
+            aria-hidden="true"
+            className={`auth-tab-indicator absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-lg bg-white dark:bg-slate-900 shadow-sm ${
+              isRegister ? 'translate-x-full' : ''
+            }`}
+          />
           <button
             type="button"
             onClick={() => {
               setIsRegister(false);
               setError(null);
             }}
-            className={`flex-1 py-2 rounded-lg transition-all ${
+            className={`relative z-10 flex-1 py-2 rounded-lg transition-colors ${
               !isRegister
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                ? 'text-slate-900 dark:text-white'
                 : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -89,9 +156,9 @@ export const LoginPage: React.FC = () => {
               setIsRegister(true);
               setError(null);
             }}
-            className={`flex-1 py-2 rounded-lg transition-all ${
+            className={`relative z-10 flex-1 py-2 rounded-lg transition-colors ${
               isRegister
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                ? 'text-slate-900 dark:text-white'
                 : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -166,7 +233,7 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold shadow-md shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="auth-submit relative w-full overflow-hidden py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold shadow-md shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50"
           >
             <span>{isLoading ? 'Processing...' : isRegister ? 'Register & Start' : 'Sign In'}</span>
             <ArrowRight className="w-4 h-4" />

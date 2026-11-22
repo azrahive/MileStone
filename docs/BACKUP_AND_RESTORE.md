@@ -29,10 +29,10 @@ You can schedule automated database file snapshots using the provided shell scri
 ```bash
 ./scripts/backup.sh
 ```
-This copies `backend/smarttask.db` with a timestamp into `backups/smarttask_backup_YYYYMMDD_HHMMSS.db`.
+This copies `backend/milestone.db` with a timestamp into `backups/milestone_backup_YYYYMMDD_HHMMSS.db`.
 You can add this to your crontab to run daily:
 ```bash
-0 2 * * * /Users/mdazizurrahim/Desktop/SmartTask/scripts/backup.sh >/dev/null 2>&1
+0 2 * * * /Users/mdazizurrahim/Desktop/MileStone/scripts/backup.sh >/dev/null 2>&1
 ```
 
 ---

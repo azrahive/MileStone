@@ -25,7 +25,7 @@ import {
   Cell,
 } from 'recharts';
 import { api } from '../services/api';
-import { DashboardStats, Task, Project } from '../types';
+import { DashboardStats, Task } from '../types';
 import { TaskCard } from '../components/TaskCard';
 
 const PRIORITY_COLORS: Record<string, string> = {
@@ -110,6 +110,8 @@ export const DashboardPage: React.FC = () => {
       icon: TrendingUp,
       color: 'text-indigo-600 dark:text-indigo-400',
       bg: 'bg-indigo-50 dark:bg-indigo-950/60',
+      accent: 'bg-indigo-500',
+      sub: 'Across active projects',
     },
     {
       label: 'Completed',
@@ -117,6 +119,7 @@ export const DashboardPage: React.FC = () => {
       icon: CheckCircle2,
       color: 'text-emerald-600 dark:text-emerald-400',
       bg: 'bg-emerald-50 dark:bg-emerald-950/60',
+      accent: 'bg-emerald-500',
       sub: `${stats.overall_completion_percentage}% completion rate`,
     },
     {
@@ -125,6 +128,7 @@ export const DashboardPage: React.FC = () => {
       icon: Clock,
       color: 'text-amber-600 dark:text-amber-400',
       bg: 'bg-amber-50 dark:bg-amber-950/60',
+      accent: 'bg-amber-500',
       sub: `${stats.in_progress_tasks} in progress`,
     },
     {
@@ -133,6 +137,7 @@ export const DashboardPage: React.FC = () => {
       icon: AlertCircle,
       color: 'text-rose-600 dark:text-rose-400',
       bg: 'bg-rose-50 dark:bg-rose-950/60',
+      accent: 'bg-rose-500',
       sub: stats.overdue_tasks > 0 ? 'Requires attention' : 'All up to date',
     },
   ];
@@ -173,8 +178,9 @@ export const DashboardPage: React.FC = () => {
         {kpis.map((kpi, idx) => (
           <div
             key={idx}
-            className="glass-card p-5 rounded-2xl flex flex-col justify-between space-y-3"
+            className="relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-[0_2px_10px_rgba(15,23,42,0.03)] hover:shadow-[0_10px_25px_rgba(15,23,42,0.07)] hover:-translate-y-0.5 transition-all duration-200 p-5 flex flex-col justify-between space-y-3"
           >
+            <span className={`absolute top-0 left-0 h-1 w-full ${kpi.accent}`} />
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                 {kpi.label}
@@ -184,7 +190,7 @@ export const DashboardPage: React.FC = () => {
               </div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+              <div className="text-2xl sm:text-3xl font-extrabold tabular-nums text-slate-900 dark:text-white">
                 {kpi.value}
               </div>
               {kpi.sub && (
@@ -201,7 +207,7 @@ export const DashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Weekly Chart */}
         <div className="lg:col-span-2 glass-card p-5 rounded-2xl space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-sm font-bold text-slate-900 dark:text-white">
                 Weekly Productivity Trend
@@ -209,6 +215,16 @@ export const DashboardPage: React.FC = () => {
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 Tasks completed vs created over the last 7 days
               </p>
+            </div>
+            <div className="flex items-center gap-3 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                Completed
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-indigo-500" />
+                Created
+              </span>
             </div>
           </div>
 
@@ -218,7 +234,12 @@ export const DashboardPage: React.FC = () => {
                 data={stats.weekly_productivity}
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.15} />
+                <CartesianGrid
+                  stroke="var(--border-color)"
+                  strokeDasharray="4 4"
+                  vertical={false}
+                  opacity={0.75}
+                />
                 <XAxis dataKey="date" tick={{ fontSize: 11 }} tickLine={false} />
                 <YAxis tick={{ fontSize: 11 }} tickLine={false} allowDecimals={false} />
                 <Tooltip
@@ -230,8 +251,20 @@ export const DashboardPage: React.FC = () => {
                     fontSize: '12px',
                   }}
                 />
-                <Bar dataKey="completed" name="Completed" fill="#10b981" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="created" name="Created" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                <Bar
+                  dataKey="completed"
+                  name="Completed"
+                  fill="#10b981"
+                  radius={[8, 8, 0, 0]}
+                  className="transition-[filter] hover:brightness-110"
+                />
+                <Bar
+                  dataKey="created"
+                  name="Created"
+                  fill="#6366f1"
+                  radius={[8, 8, 0, 0]}
+                  className="transition-[filter] hover:brightness-110"
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -248,38 +281,46 @@ export const DashboardPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="h-44 w-full flex items-center justify-center">
+          <div className="relative h-44 w-full flex items-center justify-center">
             {stats.total_tasks > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={stats.priority_distribution}
-                    dataKey="count"
-                    nameKey="priority"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={45}
-                    outerRadius={65}
-                    paddingAngle={4}
-                  >
-                    {stats.priority_distribution.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={PRIORITY_COLORS[entry.priority] || '#6366f1'}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#1e293b',
-                      borderRadius: '12px',
-                      border: 'none',
-                      color: '#fff',
-                      fontSize: '12px',
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+              <>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={stats.priority_distribution}
+                      dataKey="count"
+                      nameKey="priority"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={45}
+                      outerRadius={65}
+                      paddingAngle={4}
+                    >
+                      {stats.priority_distribution.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={PRIORITY_COLORS[entry.priority] || '#6366f1'}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1e293b',
+                        borderRadius: '12px',
+                        border: 'none',
+                        color: '#fff',
+                        fontSize: '12px',
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-2xl font-extrabold tabular-nums text-slate-900 dark:text-white">
+                    {stats.total_tasks}
+                  </span>
+                  <span className="text-xs text-slate-400">Tasks</span>
+                </div>
+              </>
             ) : (
               <div className="text-xs text-slate-400">No tasks created yet</div>
             )}
@@ -287,7 +328,10 @@ export const DashboardPage: React.FC = () => {
 
           <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
             {stats.priority_distribution.map((p) => (
-              <div key={p.priority} className="flex items-center justify-between text-xs">
+              <div
+                key={p.priority}
+                className="flex items-center justify-between text-xs px-2.5 py-2 rounded-lg transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+              >
                 <div className="flex items-center gap-2">
                   <span
                     className="w-2.5 h-2.5 rounded-full"
@@ -309,7 +353,7 @@ export const DashboardPage: React.FC = () => {
       {/* Two Column Grid: Upcoming Deadlines & Project Progress */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Upcoming Deadlines */}
-        <div className="glass-card p-5 rounded-2xl space-y-4">
+        <div className="glass-card p-5 rounded-2xl shadow-[0_2px_10px_rgba(15,23,42,0.03)] border-slate-200/80 dark:border-slate-800 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-indigo-500" />
@@ -347,7 +391,7 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Project Progress Overview */}
-        <div className="glass-card p-5 rounded-2xl space-y-4">
+        <div className="glass-card p-5 rounded-2xl shadow-[0_2px_10px_rgba(15,23,42,0.03)] border-slate-200/80 dark:border-slate-800 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FolderKanban className="w-4 h-4 text-indigo-500" />
@@ -379,7 +423,12 @@ export const DashboardPage: React.FC = () => {
                       />
                       <span>{proj.title}</span>
                     </NavLink>
-                    <span className="font-semibold text-slate-700 dark:text-slate-300">
+                    <span
+                      className="px-2 py-1 rounded-full text-[11px] font-semibold tabular-nums text-slate-700 dark:text-slate-300"
+                      style={{
+                        backgroundColor: `color-mix(in srgb, ${proj.color} 14%, var(--bg-main))`,
+                      }}
+                    >
                       {proj.completed_tasks}/{proj.total_tasks} ({proj.completion_rate}%)
                     </span>
                   </div>

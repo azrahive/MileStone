@@ -27,7 +27,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   const [projectId, setProjectId] = useState(defaultProjectId);
   const [priority, setPriority] = useState<Priority>('MEDIUM');
   const [dueDate, setDueDate] = useState(defaultDueDate);
-  const [estimatedMinutes, setEstimatedMinutes] = useState(30);
+  const [estimatedMinutes, setEstimatedMinutes] = useState('');
   const [subtaskInputs, setSubtaskInputs] = useState<string[]>([]);
   const [subtaskDraft, setSubtaskDraft] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,7 +52,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
         priority,
         status: 'PENDING',
         due_date: dueDate ? new Date(dueDate).toISOString() : undefined,
-        estimated_minutes: estimatedMinutes,
+        estimated_minutes: estimatedMinutes === '' ? null : Number(estimatedMinutes),
       });
 
       // If initial subtasks were added, create them now
@@ -70,6 +70,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
       // Reset form
       setTitle('');
       setDescription('');
+      setEstimatedMinutes('');
       setSubtaskInputs([]);
     } catch (err) {
       console.error('Failed to create task:', err);
@@ -177,8 +178,9 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
                 type="number"
                 min="0"
                 step="5"
+                placeholder="Optional"
                 value={estimatedMinutes}
-                onChange={(e) => setEstimatedMinutes(parseInt(e.target.value) || 0)}
+                onChange={(e) => setEstimatedMinutes(e.target.value)}
                 className="w-full px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 text-slate-800 dark:text-slate-200 text-xs focus:ring-2 focus:ring-indigo-500"
               />
             </div>

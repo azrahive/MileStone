@@ -9,7 +9,9 @@ interface SettingsState {
   resetApiBaseUrl: () => void;
 }
 
-const DEFAULT_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const configuredApiUrl = import.meta.env.VITE_API_URL || '';
+const DEFAULT_API_URL =
+  configuredApiUrl || (import.meta.env.PROD ? '' : 'http://localhost:8000');
 
 function applyTheme(theme: ThemeMode) {
   const root = document.documentElement;
@@ -27,12 +29,12 @@ function applyTheme(theme: ThemeMode) {
 export const useSettingsStore = create<SettingsState>((set) => {
   const savedTheme =
     (localStorage.getItem('milestone_theme') as ThemeMode) ||
-    (localStorage.getItem('smarttask_theme') as ThemeMode) ||
+    (localStorage.getItem('milestone_theme') as ThemeMode) ||
     'system';
   const savedApiUrl =
-    localStorage.getItem('milestone_api_url') ||
-    localStorage.getItem('smarttask_api_url') ||
-    DEFAULT_API_URL;
+    import.meta.env.PROD && !configuredApiUrl
+      ? DEFAULT_API_URL
+      : localStorage.getItem('milestone_api_url') || DEFAULT_API_URL;
 
   // Apply initial theme
   applyTheme(savedTheme);
@@ -42,7 +44,7 @@ export const useSettingsStore = create<SettingsState>((set) => {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
       const currentTheme =
         (localStorage.getItem('milestone_theme') as ThemeMode) ||
-        (localStorage.getItem('smarttask_theme') as ThemeMode);
+        (localStorage.getItem('milestone_theme') as ThemeMode);
       if (currentTheme === 'system' || !currentTheme) {
         applyTheme('system');
       }
@@ -70,7 +72,6 @@ export const useSettingsStore = create<SettingsState>((set) => {
 
     resetApiBaseUrl: () => {
       localStorage.removeItem('milestone_api_url');
-      localStorage.removeItem('smarttask_api_url');
       set({ apiBaseUrl: DEFAULT_API_URL });
     },
   };

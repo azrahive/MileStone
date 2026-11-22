@@ -20,11 +20,13 @@ class UserLogin(BaseModel):
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
     password: Optional[str] = None
+    avatar_url: Optional[str] = None
 
 
 class ProfileUpdate(BaseModel):
     full_name: Optional[str] = None
     email: Optional[EmailStr] = None
+    avatar_url: Optional[str] = None
 
 
 class PasswordChange(BaseModel):
@@ -34,6 +36,7 @@ class PasswordChange(BaseModel):
 
 class UserResponse(UserBase):
     id: str
+    avatar_url: Optional[str] = None
     is_active: bool
     created_at: datetime
     updated_at: datetime

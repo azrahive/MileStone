@@ -76,7 +76,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         </div>
 
         {task.description && (
-          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+          <p className="max-h-24 overflow-y-auto pr-1.5 text-xs text-slate-500 dark:text-slate-400 text-justify whitespace-pre-wrap break-words leading-relaxed description-scrollbar">
             {task.description}
           </p>
         )}
@@ -85,12 +85,12 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
           {/* Project tag */}
           {task.project_title && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-[11px]">
+            <span className="inline-flex items-center gap-1.5 max-w-[240px] sm:max-w-none px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-[11px]">
               <span
-                className="w-2 h-2 rounded-full"
+                className="w-2 h-2 rounded-full shrink-0"
                 style={{ backgroundColor: task.project_color || '#6366f1' }}
               />
-              {task.project_title}
+              <span className="truncate">{task.project_title}</span>
             </span>
           )}
 

@@ -44,30 +44,32 @@ export const SettingsPage: React.FC = () => {
     setIsTesting(true);
     setTestStatus({ tested: false });
     try {
-      let target = inputUrl.trim();
-      if (target.endsWith('/')) target = target.slice(0, -1);
+      const target = inputUrl.trim().replace(/\/+$/, '');
+      const parsedTarget = new URL(target);
+      if (!['http:', 'https:'].includes(parsedTarget.protocol)) {
+        throw new Error('URL must use HTTP or HTTPS');
+      }
 
-      const res = await fetch(`${target}/health`, { method: 'GET' });
+      const res = await fetch(`${target}/docs`, { method: 'GET' });
       if (res.ok) {
-        const data = await res.json();
         setTestStatus({
           tested: true,
           success: true,
-          message: `Connection successful! Server: ${data.app || 'MileStone'} (v${data.version || '1.0'})`,
+          message: 'Backend documentation endpoint responded successfully.',
         });
         setApiBaseUrl(target);
       } else {
         setTestStatus({
           tested: true,
           success: false,
-          message: `Server returned HTTP status ${res.status}`,
+          message: `The backend returned HTTP status ${res.status}.`,
         });
       }
-    } catch (e: any) {
+    } catch (e) {
       setTestStatus({
         tested: true,
         success: false,
-        message: `Failed to connect: ${e.message || 'Network unreachable'}. Please check URL and CORS.`,
+        message: `Failed to connect: ${e instanceof Error ? e.message : 'Network unreachable'}. Please check the URL and CORS settings.`,
       });
     } finally {
       setIsTesting(false);
@@ -78,11 +80,7 @@ export const SettingsPage: React.FC = () => {
     resetApiBaseUrl();
     const defaultUrl = useSettingsStore.getState().apiBaseUrl;
     setInputUrl(defaultUrl);
-    setTestStatus({
-      tested: true,
-      success: true,
-      message: 'Reset to default API endpoint.',
-    });
+    setTestStatus({ tested: false });
   };
 
   const handleExportJson = async () => {
@@ -221,13 +219,13 @@ export const SettingsPage: React.FC = () => {
               className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isTesting ? 'animate-spin' : ''}`} />
-              <span>{isTesting ? 'Testing...' : 'Test & Save'}</span>
+              <span>{isTesting ? 'Testing...' : 'Test Connection'}</span>
             </button>
             <button
               onClick={handleResetUrl}
               className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold transition-colors"
             >
-              Reset
+              Reset to Default
             </button>
           </div>
 
@@ -244,6 +242,13 @@ export const SettingsPage: React.FC = () => {
               ) : (
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
               )}
+              <span
+                className={`font-semibold ${
+                  testStatus.success ? 'text-emerald-700 dark:text-emerald-300' : 'text-rose-700 dark:text-rose-300'
+                }`}
+              >
+                {testStatus.success ? 'Connected' : 'Unreachable'}
+              </span>
               <span>{testStatus.message}</span>
             </div>
           )}

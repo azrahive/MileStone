@@ -178,7 +178,7 @@ export const ArchivePage: React.FC = () => {
                       {p.title}
                     </h3>
                     {p.description && (
-                      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">
+                      <p className="max-h-24 overflow-y-auto pr-1.5 text-xs text-slate-500 dark:text-slate-400 whitespace-pre-wrap break-words description-scrollbar">
                         {p.description}
                       </p>
                     )}
@@ -241,7 +241,7 @@ export const ArchivePage: React.FC = () => {
                     {t.title}
                   </h3>
                   {t.description && (
-                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">
+                    <p className="max-h-24 overflow-y-auto pr-1.5 text-xs text-slate-500 dark:text-slate-400 whitespace-pre-wrap break-words description-scrollbar">
                       {t.description}
                     </p>
                   )}

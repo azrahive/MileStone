@@ -106,7 +106,11 @@ export const api = {
         body: JSON.stringify(data),
       }),
     me: () => request<User>('/auth/me'),
-    updateProfile: (data: { full_name?: string; email?: string }) =>
+    updateProfile: (data: {
+      full_name?: string;
+      email?: string;
+      avatar_url?: string | null;
+    }) =>
       request<User>('/auth/profile', {
         method: 'PUT',
         body: JSON.stringify(data),
@@ -182,7 +186,12 @@ export const api = {
       return request<Task[]>(`/tasks?${query.toString()}`);
     },
     getById: (id: string) => request<Task>(`/tasks/${id}`),
-    create: (data: Partial<Task> & { tag_ids?: string[] }) =>
+    create: (
+      data: Omit<Partial<Task>, 'estimated_minutes'> & {
+        estimated_minutes?: number | null;
+        tag_ids?: string[];
+      }
+    ) =>
       request<Task>('/tasks', {
         method: 'POST',
         body: JSON.stringify(data),

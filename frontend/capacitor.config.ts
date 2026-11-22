@@ -1,11 +1,11 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.smarttask.app',
+  appId: 'com.milestone.app',
   appName: 'MileStone',
   webDir: 'dist',
   server: {
-    androidScheme: 'https',
+    androidScheme: 'http',
     cleartext: true, // Allows testing with local HTTP backend endpoints like http://10.0.2.2:8000
   },
   plugins: {

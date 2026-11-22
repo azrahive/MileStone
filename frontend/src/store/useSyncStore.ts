@@ -24,7 +24,7 @@ interface SyncState {
 export const useSyncStore = create<SyncState>((set, get) => {
   const savedQueue =
     localStorage.getItem('milestone_offline_queue') ||
-    localStorage.getItem('smarttask_offline_queue');
+    localStorage.getItem('milestone_offline_queue');
   let initialQueue: QueuedMutation[] = [];
   if (savedQueue) {
     try {
@@ -56,7 +56,7 @@ export const useSyncStore = create<SyncState>((set, get) => {
 
     clearQueue: () => {
       localStorage.removeItem('milestone_offline_queue');
-      localStorage.removeItem('smarttask_offline_queue');
+      localStorage.removeItem('milestone_offline_queue');
       set({ queuedMutations: [] });
     },
 

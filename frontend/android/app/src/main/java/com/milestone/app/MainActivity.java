@@ -1,4 +1,4 @@
-package com.smarttask.app;
+package com.milestone.app;
 
 import com.getcapacitor.BridgeActivity;
 

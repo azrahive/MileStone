@@ -65,10 +65,37 @@ cd backend
 
 ---
 
+## ☁️ Unified Vercel Deployment
+
+The repository root is configured to build the Vite frontend from `frontend/`
+and expose the FastAPI application through `api/index.py`. Import the repository
+as a Vercel project using the repository root as the project root.
+
+Configure these Vercel environment variables for Production and Preview:
+
+- `DATABASE_URL`: Neon PostgreSQL connection string. Both `postgres://` and
+  `postgresql://` URLs are supported. SQLite is only a local fallback; Vercel's
+  serverless filesystem is not persistent.
+- `SECRET_KEY`: a unique, long random signing key. Do not use the development
+  default in a deployed environment.
+- `VITE_API_URL`: leave unset to have the frontend call the API on the same
+  origin. Set it only when the API is hosted at a different origin.
+
+The root `requirements.txt` supplies Python function dependencies, and
+`vercel.json` configures the frontend build, API rewrites, and SPA fallback.
+Apply Alembic migrations to the Neon database when deploying schema changes.
+Do not commit `.env` files or database files.
+
+---
+
 ## 📂 Project Structure
 
 ```
-SmartTask/
+MileStone/
+├── api/
+│   └── index.py              # Vercel FastAPI function entrypoint
+├── requirements.txt          # Root Python function dependencies
+├── vercel.json               # Unified frontend/API deployment config
 ├── backend/
 │   ├── app/
 │   │   ├── api/v1/endpoints/  # Modular API routes (auth, projects, tasks, daily_focus, calendar, etc.)

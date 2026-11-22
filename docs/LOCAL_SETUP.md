@@ -16,7 +16,7 @@ This guide walks through configuring and running MileStone locally on macOS.
 ## 1. Quick Start (Automated Script)
 To start both backend and frontend concurrently with a single command:
 ```bash
-cd /Users/mdazizurrahim/Desktop/SmartTask
+cd /Users/mdazizurrahim/Desktop/MileStone
 ./scripts/run_dev.sh
 ```
 This script will:
@@ -30,7 +30,7 @@ This script will:
 
 ### Backend Setup:
 ```bash
-cd /Users/mdazizurrahim/Desktop/SmartTask/backend
+cd /Users/mdazizurrahim/Desktop/MileStone/backend
 
 # Activate virtual environment
 source .venv/bin/activate
@@ -50,7 +50,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 ### Frontend Setup:
 ```bash
-cd /Users/mdazizurrahim/Desktop/SmartTask/frontend
+cd /Users/mdazizurrahim/Desktop/MileStone/frontend
 
 # Install dependencies (if not already installed)
 npm install
@@ -65,7 +65,7 @@ npm run dev -- --host 0.0.0.0 --port 5173
 ## 3. Running Backend Tests
 To verify all unit and integration tests across Auth, Projects, Tasks, Subtasks, Analytics, and Backups:
 ```bash
-cd /Users/mdazizurrahim/Desktop/SmartTask/backend
+cd /Users/mdazizurrahim/Desktop/MileStone/backend
 .venv/bin/pytest -v
 ```
 
@@ -73,5 +73,5 @@ cd /Users/mdazizurrahim/Desktop/SmartTask/backend
 
 ## 4. Default Demo Account
 When accessing the application for the first time, click **"Quick-fill demo credentials"** on the login page or register a new account:
-- **Email**: `demo@smarttask.local`
-- **Password**: `SmartTask2026!`
+- **Email**: `demo@milestone.local`
+- **Password**: `MileStone2026!`

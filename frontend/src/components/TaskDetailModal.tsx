@@ -311,11 +311,11 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
               Description
             </label>
             <textarea
-              rows={2}
+              rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               onBlur={() => handleSaveField({ description })}
-              className="w-full bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full max-h-24 overflow-y-auto pr-1.5 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 whitespace-pre-wrap break-words focus:outline-none focus:ring-2 focus:ring-indigo-500 description-scrollbar"
               placeholder="Add more details about this task..."
             />
           </div>

@@ -4,7 +4,7 @@ set -e
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BACKUP_DIR="$DIR/backups"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-DB_FILE="$DIR/backend/smarttask.db"
+DB_FILE="$DIR/backend/milestone.db"
 
 mkdir -p "$BACKUP_DIR"
 

@@ -10,11 +10,11 @@ import { TaskDetailModal } from '../components/TaskDetailModal';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { useAuthStore } from '../store/useAuthStore';
 import { api } from '../services/api';
-import { Project, Task, Category } from '../types';
+import { Project, Task, Category, User } from '../types';
 import { initSyncListeners } from '../services/syncService';
 
 export const AppLayout: React.FC = () => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user, setUser } = useAuthStore();
   const queryClient = useQueryClient();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -27,6 +27,17 @@ export const AppLayout: React.FC = () => {
   useEffect(() => {
     initSyncListeners();
   }, []);
+
+  const { data: currentUser } = useQuery<User>({
+    queryKey: ['auth', 'me', user?.id],
+    queryFn: () => api.auth.me(),
+    enabled: isAuthenticated,
+    staleTime: 0,
+  });
+
+  useEffect(() => {
+    if (currentUser) setUser(currentUser);
+  }, [currentUser, setUser]);
 
   // Query projects
   const { data: projects = [] } = useQuery<Project[]>({

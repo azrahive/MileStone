@@ -148,7 +148,7 @@ export const TasksPage: React.FC = () => {
       <div className="flex p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-800 max-w-md">
         <button
           onClick={() => handleTabChange('all')}
-          className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
+          className={`flex-1 text-xs sm:text-sm px-2.5 sm:px-4 py-1.5 whitespace-nowrap rounded-xl font-semibold flex items-center justify-center gap-2 transition-all ${
             activeTab === 'all'
               ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -159,7 +159,7 @@ export const TasksPage: React.FC = () => {
         </button>
         <button
           onClick={() => handleTabChange('completed')}
-          className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
+          className={`flex-1 text-xs sm:text-sm px-2.5 sm:px-4 py-1.5 whitespace-nowrap rounded-xl font-semibold flex items-center justify-center gap-2 transition-all ${
             activeTab === 'completed'
               ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -170,7 +170,7 @@ export const TasksPage: React.FC = () => {
         </button>
         <button
           onClick={() => handleTabChange('pending')}
-          className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
+          className={`flex-1 text-xs sm:text-sm px-2.5 sm:px-4 py-1.5 whitespace-nowrap rounded-xl font-semibold flex items-center justify-center gap-2 transition-all ${
             activeTab === 'pending'
               ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'

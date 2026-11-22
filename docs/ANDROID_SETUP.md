@@ -68,7 +68,7 @@ When launching the app for the first time on Android:
 2. Under **Backend API Server URL**, input your backend address:
    - **Android Emulator**: `http://10.0.2.2:8000` (maps directly to host MacBook).
    - **Physical Phone on same Wi-Fi**: `http://192.168.x.x:8000` (your MacBook's local Wi-Fi IP).
-   - **Production / Cloud Server**: `https://smarttask.yourdomain.com`.
+   - **Production / Cloud Server**: `https://milestone.yourdomain.com`.
 3. Tap **Test & Save**. A green success notification will confirm the live connection!
 
 ---
@@ -78,7 +78,7 @@ To generate an optimized, signed APK for distribution or Google Play:
 
 1. Generate a signing keystore (if you don't have one):
    ```bash
-   keytool -genkey -v -keystore smarttask-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias smarttask
+   keytool -genkey -v -keystore milestone-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias milestone
    ```
 2. Build the release APK with Gradle:
    ```bash
@@ -88,5 +88,5 @@ To generate an optimized, signed APK for distribution or Google Play:
    Output: `android/app/build/outputs/apk/release/app-release-unsigned.apk`
 3. Sign the APK using `apksigner`:
    ```bash
-   $ANDROID_HOME/build-tools/34.0.0/apksigner sign --ks smarttask-release-key.jks --out app-release-signed.apk app-release-unsigned.apk
+   $ANDROID_HOME/build-tools/34.0.0/apksigner sign --ks milestone-release-key.jks --out app-release-signed.apk app-release-unsigned.apk
    ```

@@ -43,6 +43,8 @@ def update_profile(
         current_user.email = profile_in.email.lower().strip()
     if profile_in.full_name is not None:
         current_user.full_name = profile_in.full_name.strip()
+    if "avatar_url" in profile_in.model_fields_set:
+        current_user.avatar_url = profile_in.avatar_url
     db.commit()
     db.refresh(current_user)
     return current_user
@@ -67,4 +69,3 @@ def change_password(
     current_user.hashed_password = get_password_hash(pwd_in.new_password)
     db.commit()
     return {"message": "Password updated successfully."}
-

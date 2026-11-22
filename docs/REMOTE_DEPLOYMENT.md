@@ -19,7 +19,7 @@ Cloudflare Tunnel creates an encrypted outbound-only connection from your server
 2. Log in and create a tunnel:
    ```bash
    cloudflared tunnel login
-   cloudflared tunnel create smarttask-tunnel
+   cloudflared tunnel create milestone-tunnel
    ```
 3. Map your backend service:
    ```yaml
@@ -27,20 +27,20 @@ Cloudflare Tunnel creates an encrypted outbound-only connection from your server
    tunnel: <TUNNEL_UUID>
    credentials-file: /path/to/<TUNNEL_UUID>.json
    ingress:
-     - hostname: api-smarttask.yourdomain.com
+     - hostname: api-milestone.yourdomain.com
        service: http://localhost:8000
-     - hostname: smarttask.yourdomain.com
+     - hostname: milestone.yourdomain.com
        service: http://localhost:5173
      - service: http_status:404
    ```
-4. Run the tunnel: `cloudflared tunnel run smarttask-tunnel`.
-5. Point your Android APK and browser to `https://api-smarttask.yourdomain.com`.
+4. Run the tunnel: `cloudflared tunnel run milestone-tunnel`.
+5. Point your Android APK and browser to `https://api-milestone.yourdomain.com`.
 
 ### Option B: Tailscale VPN (Private Multi-Device Mesh)
 If you only need personal access across your own devices:
 1. Install Tailscale on your MacBook and Android phone.
 2. Each device gets a secure private IP (e.g., `100.x.y.z`).
-3. In the SmartTask Android App Settings, simply enter `http://100.x.y.z:8000`.
+3. In the MileStone Android App Settings, simply enter `http://100.x.y.z:8000`.
 
 ---
 
@@ -50,14 +50,14 @@ If you only need personal access across your own devices:
 Install PostgreSQL on the VPS:
 ```bash
 sudo apt update && sudo apt install -y postgresql postgresql-contrib libpq-dev
-sudo -u postgres psql -c "CREATE DATABASE smarttask;"
-sudo -u postgres psql -c "CREATE USER smarttask_user WITH PASSWORD 'StrongSecretPasswordHere';"
-sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE smarttask TO smarttask_user;"
+sudo -u postgres psql -c "CREATE DATABASE milestone;"
+sudo -u postgres psql -c "CREATE USER milestone_user WITH PASSWORD 'StrongSecretPasswordHere';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE milestone TO milestone_user;"
 ```
 
 Update your `backend/.env`:
 ```env
-DATABASE_URL=postgresql+psycopg2://smarttask_user:StrongSecretPasswordHere@localhost:5432/smarttask
+DATABASE_URL=postgresql+psycopg2://milestone_user:StrongSecretPasswordHere@localhost:5432/milestone
 ```
 Run migrations:
 ```bash
@@ -65,16 +65,16 @@ python3 -m alembic upgrade head
 ```
 
 ### 2.2 Systemd Backend Service
-Create `/etc/systemd/system/smarttask-backend.service`:
+Create `/etc/systemd/system/milestone-backend.service`:
 ```ini
 [Unit]
-Description=SmartTask FastAPI Production Backend
+Description=MileStone FastAPI Production Backend
 After=network.target postgresql.service
 
 [Service]
 User=www-data
-WorkingDirectory=/var/www/SmartTask/backend
-ExecStart=/var/www/SmartTask/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 4
+WorkingDirectory=/var/www/MileStone/backend
+ExecStart=/var/www/MileStone/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 4
 Restart=always
 
 [Install]
@@ -83,26 +83,26 @@ WantedBy=multi-user.target
 Enable and start:
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now smarttask-backend
+sudo systemctl enable --now milestone-backend
 ```
 
 ### 2.3 Frontend Production Static Build
 ```bash
-cd /var/www/SmartTask/frontend
+cd /var/www/MileStone/frontend
 npm install
 npm run build
-# Built files reside in /var/www/SmartTask/frontend/dist
+# Built files reside in /var/www/MileStone/frontend/dist
 ```
 
 ### 2.4 Nginx Reverse Proxy with Let's Encrypt SSL
-Create `/etc/nginx/sites-available/smarttask.conf`:
+Create `/etc/nginx/sites-available/milestone.conf`:
 ```nginx
 server {
-    server_name smarttask.yourdomain.com;
+    server_name milestone.yourdomain.com;
 
     # Frontend SPA
     location / {
-        root /var/www/SmartTask/frontend/dist;
+        root /var/www/MileStone/frontend/dist;
         index index.html;
         try_files $uri $uri/ /index.html;
     }
@@ -125,8 +125,8 @@ server {
 ```
 Enable site and obtain SSL:
 ```bash
-sudo ln -s /etc/nginx/sites-available/smarttask.conf /etc/nginx/sites-enabled/
-sudo certbot --nginx -d smarttask.yourdomain.com
+sudo ln -s /etc/nginx/sites-available/milestone.conf /etc/nginx/sites-enabled/
+sudo certbot --nginx -d milestone.yourdomain.com
 sudo systemctl restart nginx
 ```
-Now SmartTask is accessible securely worldwide over HTTPS!
+Now MileStone is accessible securely worldwide over HTTPS!

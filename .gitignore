@@ -1,20 +1,23 @@
 # Python
+.env
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-backend/.venv/
 .venv/
 venv/
 ENV/
 *.db
-*.sqlite3
-smarttask.db
+*.sqlite*
+.pytest_cache/
+.coverage
+htmlcov/
 backups/
 
 # Node & Frontend
 node_modules/
+dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -23,6 +26,8 @@ frontend/dist-ssr/
 *.local
 
 # Android & Gradle
+android/build/
+android/.gradle/
 android/app/build/
 frontend/android/app/build/
 frontend/android/.gradle/
@@ -34,6 +39,7 @@ captures/
 .externalNativeBuild
 .cxx
 local.properties
+milestone_flutter/build/
 
 # IDE & OS
 .DS_Store
@@ -41,6 +47,3 @@ local.properties
 .vscode/
 *.swp
 *.swo
-.pytest_cache/
-.coverage
-htmlcov/

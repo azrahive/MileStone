@@ -33,7 +33,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   // General tab states
   const [fullName, setFullName] = useState(user?.full_name || '');
   const [email, setEmail] = useState(user?.email || '');
-  const [avatar, setAvatar] = useState<string | undefined>(user?.avatar || user?.avatar_url);
+  const [avatar, setAvatar] = useState<string | null>(user?.avatar_url ?? null);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileSuccess, setProfileSuccess] = useState<string | null>(null);
   const [profileError, setProfileError] = useState<string | null>(null);
@@ -54,7 +54,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     if (isOpen && user) {
       setFullName(user.full_name || '');
       setEmail(user.email || '');
-      setAvatar(user.avatar || user.avatar_url);
+      setAvatar(user.avatar_url ?? null);
       setProfileSuccess(null);
       setProfileError(null);
       setCurrentPassword('');
@@ -67,7 +67,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
   if (!isOpen || !user) return null;
 
-  // Handle local image file upload with offscreen canvas compression (max 256x256)
+  // Compress and resize the selected image before sending it to the backend.
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -82,29 +82,36 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const TARGET_SIZE = 256;
-        // Center-crop to a clean 1:1 square
-        const minDim = Math.min(img.width, img.height);
-        const sx = (img.width - minDim) / 2;
-        const sy = (img.height - minDim) / 2;
-
-        canvas.width = TARGET_SIZE;
-        canvas.height = TARGET_SIZE;
+        const scale = Math.min(256 / img.naturalWidth, 256 / img.naturalHeight, 1);
+        canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+        canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
         const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, TARGET_SIZE, TARGET_SIZE);
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-          setAvatar(dataUrl);
+        if (!ctx) {
+          setProfileError('Could not process this image. Please try another file.');
+          return;
+        }
+        try {
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          setAvatar(canvas.toDataURL('image/jpeg', 0.8));
           setProfileError(null);
+        } catch {
+          setProfileError('Could not process this image. Please try another file.');
         }
       };
-      img.src = event.target?.result as string;
+      img.onerror = () => setProfileError('Could not read this image. Please try another file.');
+      if (typeof event.target?.result !== 'string') {
+        setProfileError('Could not read this file. Please try another image.');
+        return;
+      }
+      img.src = event.target.result;
     };
+    reader.onerror = () => setProfileError('Could not read this file. Please try another image.');
     reader.readAsDataURL(file);
   };
 
   const handleRemovePhoto = () => {
-    setAvatar(undefined);
+    setAvatar(null);
+    setProfileError(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -133,35 +140,13 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     try {
       setIsSavingProfile(true);
 
-      // Attempt backend update if online
-      try {
-        await api.auth.updateProfile({
-          full_name: trimmedName,
-          email: trimmedEmail,
-        });
-      } catch (err: any) {
-        // If error is duplicate email or specific API error, show it
-        if (err instanceof ApiError && err.data?.detail) {
-          setProfileError(err.data.detail);
-          setIsSavingProfile(false);
-          return;
-        }
-        // Otherwise continue so local state / localStorage remains resilient
-        console.warn('Backend profile update note:', err);
-      }
-
-      // Update auth store & persistent user record in localStorage
-      const updatedUser = {
-        ...user,
+      const updatedUser = await api.auth.updateProfile({
         full_name: trimmedName,
         email: trimmedEmail,
-        avatar: avatar || undefined,
-        avatar_url: avatar || undefined,
-        updated_at: new Date().toISOString(),
-      };
+        avatar_url: avatar,
+      });
 
       setUser(updatedUser);
-      savePersistentProfile(trimmedEmail, updatedUser);
 
       setProfileSuccess('Profile updated successfully!');
       // Auto-close modal immediately upon saving
@@ -169,7 +154,11 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
         onClose();
       }, 400);
     } catch (err: any) {
-      setProfileError(err?.message || 'Failed to save profile changes.');
+      setProfileError(
+        err instanceof ApiError && err.data?.detail
+          ? err.data.detail
+          : err?.message || 'Failed to save profile changes.'
+      );
     } finally {
       setIsSavingProfile(false);
     }

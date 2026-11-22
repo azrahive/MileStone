@@ -1,14 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Sun, Clock, Calendar, Settings } from 'lucide-react';
 
 export const MobileNav: React.FC = () => {
   const tabs = [
-    { label: 'Dashboard', path: '/', icon: LayoutDashboard },
-    { label: 'My Day', path: '/my-day', icon: Sun },
-    { label: 'Pending', path: '/tasks/pending', icon: Clock },
-    { label: 'Calendar', path: '/calendar', icon: Calendar },
-    { label: 'Settings', path: '/settings', icon: Settings },
+    { label: 'Dashboard', path: '/', icon: '📊' },
+    { label: 'My Day', path: '/my-day', icon: '☀️' },
+    { label: 'Pending', path: '/tasks/pending', icon: '⏳' },
+    { label: 'Calendar', path: '/calendar', icon: '📅' },
+    { label: 'Settings', path: '/settings', icon: '⚙️' },
   ];
 
   return (
@@ -26,7 +25,9 @@ export const MobileNav: React.FC = () => {
             }`
           }
         >
-          <tab.icon className="w-4 h-4" />
+          <span className="inline-flex items-center justify-center w-5 h-5 text-[17px] leading-none shrink-0">
+            {tab.icon}
+          </span>
           <span>{tab.label}</span>
         </NavLink>
       ))}
