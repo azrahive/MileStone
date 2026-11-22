@@ -65,14 +65,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <div className="flex flex-col h-full bg-white dark:bg-[#0f172a] border-r border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">
       {/* Brand Logo Header */}
       <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-200/80 dark:border-slate-800/80">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 font-bold text-lg">
-          MS
-        </div>
+        <img
+          src="/logo-mark.png"
+          alt="MileStone Logo"
+          className="w-9 h-9 object-contain drop-shadow-sm flex-shrink-0"
+        />
         <div>
-          <h1 className="text-base font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5">
-            MileStone
-            <span className="text-[10px] uppercase font-semibold tracking-wider px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400">
-              Pro
+          <h1 className="text-base font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+            <span>MileStone</span>
+            <span className="relative flex h-2.5 w-2.5 items-center justify-center" title="Active Online Status">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]" />
             </span>
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400">Personal Productivity</p>
@@ -174,7 +177,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* User Card & Logout Footer */}
-      <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40">
+      <div className="mt-auto p-3 border-t border-slate-200/80 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-950/40 flex-shrink-0">
         <div className="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300 font-bold flex items-center justify-center text-xs flex-shrink-0">
