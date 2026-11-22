@@ -23,9 +23,11 @@ export const ProjectDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { onSelectTask, onOpenCreateTask } = useOutletContext<{
+  const { onSelectTask, onOpenCreateTask, onDeleteTask, onDuplicateTask } = useOutletContext<{
     onSelectTask: (t: Task) => void;
     onOpenCreateTask: () => void;
+    onDeleteTask: (t: Task | string) => void;
+    onDuplicateTask: (id: string) => void;
   }>();
 
   const [activeTab, setActiveTab] = useState<'pending' | 'completed' | 'all'>('pending');
@@ -237,6 +239,8 @@ export const ProjectDetailPage: React.FC = () => {
               onComplete={(t) => completeMutation.mutate(t)}
               onReopen={(t) => reopenMutation.mutate(t)}
               onSelect={onSelectTask}
+              onDelete={onDeleteTask}
+              onDuplicate={() => onDuplicateTask(task.id)}
             />
           ))
         ) : (

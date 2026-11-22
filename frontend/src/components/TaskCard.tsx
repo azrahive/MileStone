@@ -137,8 +137,8 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         </div>
       </div>
 
-      {/* Action buttons (hover) */}
-      <div className="flex items-center gap-1 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+      {/* Action buttons */}
+      <div className="flex items-center gap-1 flex-shrink-0">
         {onToggleDailyFocus && (
           <button
             type="button"
@@ -149,7 +149,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             className={`p-1.5 rounded-lg transition-colors ${
               isDailyFocus
                 ? 'text-amber-500 bg-amber-50 dark:bg-amber-950/50'
-                : 'text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800'
+                : 'text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 opacity-80 sm:opacity-0 sm:group-hover:opacity-100'
             }`}
             title={isDailyFocus ? 'Remove from My Day' : 'Add to My Day'}
           >
@@ -164,7 +164,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
               e.stopPropagation();
               onDuplicate(task);
             }}
-            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors opacity-80 sm:opacity-0 sm:group-hover:opacity-100"
             title="Duplicate task"
           >
             <Copy className="w-4 h-4" />
@@ -178,8 +178,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({
               e.stopPropagation();
               onDelete(task);
             }}
-            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-lg transition-colors"
             title="Delete task"
+            aria-label="Delete task"
           >
             <Trash2 className="w-4 h-4" />
           </button>

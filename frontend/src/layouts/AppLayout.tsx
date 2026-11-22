@@ -123,6 +123,8 @@ export const AppLayout: React.FC = () => {
               categories,
               onSelectTask: (t: Task) => setSelectedTask(t),
               onOpenCreateTask: () => setIsCreateTaskOpen(true),
+              onDeleteTask: (t: Task | string) => setTaskToDelete(typeof t === 'string' ? t : t.id),
+              onDuplicateTask: handleDuplicateTask,
             }}
           />
         </main>

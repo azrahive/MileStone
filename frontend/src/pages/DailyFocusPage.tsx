@@ -17,9 +17,10 @@ import { ConfirmDialog } from '../components/ConfirmDialog';
 
 export const DailyFocusPage: React.FC = () => {
   const queryClient = useQueryClient();
-  const { onSelectTask, onOpenCreateTask } = useOutletContext<{
+  const { onSelectTask, onOpenCreateTask, onDeleteTask } = useOutletContext<{
     onSelectTask: (t: Task) => void;
     onOpenCreateTask: () => void;
+    onDeleteTask: (t: Task | string) => void;
   }>();
 
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
@@ -172,6 +173,7 @@ export const DailyFocusPage: React.FC = () => {
                 onComplete={(t) => completeMutation.mutate(t)}
                 onReopen={(t) => reopenMutation.mutate(t)}
                 onSelect={onSelectTask}
+                onDelete={onDeleteTask}
               />
             );
           })

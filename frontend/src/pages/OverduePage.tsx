@@ -15,8 +15,9 @@ import { TaskCard } from '../components/TaskCard';
 
 export const OverduePage: React.FC = () => {
   const queryClient = useQueryClient();
-  const { onSelectTask } = useOutletContext<{
+  const { onSelectTask, onDeleteTask } = useOutletContext<{
     onSelectTask: (t: Task) => void;
+    onDeleteTask: (t: Task | string) => void;
   }>();
 
   const [rescheduleTask, setRescheduleTask] = useState<Task | null>(null);
@@ -102,6 +103,7 @@ export const OverduePage: React.FC = () => {
                 onComplete={(t) => completeMutation.mutate(t)}
                 onReopen={() => {}}
                 onSelect={onSelectTask}
+                onDelete={onDeleteTask}
               />
               <div className="absolute right-14 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button

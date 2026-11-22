@@ -22,10 +22,12 @@ export const TasksPage: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { projects, onSelectTask, onOpenCreateTask } = useOutletContext<{
+  const { projects, onSelectTask, onOpenCreateTask, onDeleteTask, onDuplicateTask } = useOutletContext<{
     projects: Project[];
     onSelectTask: (t: Task) => void;
     onOpenCreateTask: () => void;
+    onDeleteTask: (t: Task | string) => void;
+    onDuplicateTask: (id: string) => void;
   }>();
 
   // Determine active view mode based on URL route
@@ -258,6 +260,8 @@ export const TasksPage: React.FC = () => {
               onComplete={(t) => completeMutation.mutate(t)}
               onReopen={(t) => reopenMutation.mutate(t)}
               onSelect={onSelectTask}
+              onDelete={onDeleteTask}
+              onDuplicate={() => onDuplicateTask(task.id)}
             />
           ))}
         </div>

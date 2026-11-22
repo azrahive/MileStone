@@ -36,9 +36,10 @@ const PRIORITY_COLORS: Record<string, string> = {
 
 export const DashboardPage: React.FC = () => {
   const queryClient = useQueryClient();
-  const { onSelectTask, onOpenCreateTask } = useOutletContext<{
+  const { onSelectTask, onOpenCreateTask, onDeleteTask } = useOutletContext<{
     onSelectTask: (t: Task) => void;
     onOpenCreateTask: () => void;
+    onDeleteTask: (t: Task | string) => void;
   }>();
 
   // Load Dashboard stats dynamically from backend
@@ -334,6 +335,7 @@ export const DashboardPage: React.FC = () => {
                   onComplete={(t) => completeMutation.mutate(t)}
                   onReopen={(t) => reopenMutation.mutate(t)}
                   onSelect={onSelectTask}
+                  onDelete={onDeleteTask}
                 />
               ))
             ) : (
@@ -428,6 +430,7 @@ export const DashboardPage: React.FC = () => {
                 onComplete={(t) => completeMutation.mutate(t)}
                 onReopen={(t) => reopenMutation.mutate(t)}
                 onSelect={onSelectTask}
+                onDelete={onDeleteTask}
               />
             ))}
           </div>
