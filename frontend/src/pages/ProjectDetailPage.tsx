@@ -17,6 +17,7 @@ import { Project, Task } from '../types';
 import { TaskCard } from '../components/TaskCard';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { getPriorityBadge } from '../utils/helpers';
+import { useProjectFilterStore, ProjectFilterTab } from '../store/useProjectFilterStore';
 
 export const ProjectDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,7 +31,16 @@ export const ProjectDetailPage: React.FC = () => {
     onDuplicateTask: (id: string) => void;
   }>();
 
-  const [activeTab, setActiveTab] = useState<'pending' | 'completed' | 'all'>('pending');
+  const { projectFilters, setFilterForProject } = useProjectFilterStore();
+  // Default to "all", isolated per projectId
+  const activeTab: ProjectFilterTab = (id && projectFilters[id]) || 'all';
+
+  const handleTabChange = (tab: ProjectFilterTab) => {
+    if (id) {
+      setFilterForProject(id, tab);
+    }
+  };
+
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   // Load project details
@@ -189,7 +199,7 @@ export const ProjectDetailPage: React.FC = () => {
       {/* Tabs */}
       <div className="flex p-1 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 max-w-sm">
         <button
-          onClick={() => setActiveTab('all')}
+          onClick={() => handleTabChange('all')}
           className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
             activeTab === 'all'
               ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
@@ -200,7 +210,7 @@ export const ProjectDetailPage: React.FC = () => {
           <span>All ({project.total_tasks})</span>
         </button>
         <button
-          onClick={() => setActiveTab('completed')}
+          onClick={() => handleTabChange('completed')}
           className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
             activeTab === 'completed'
               ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm'
@@ -211,7 +221,7 @@ export const ProjectDetailPage: React.FC = () => {
           <span>Completed</span>
         </button>
         <button
-          onClick={() => setActiveTab('pending')}
+          onClick={() => handleTabChange('pending')}
           className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
             activeTab === 'pending'
               ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
