@@ -13,7 +13,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from 'lucide-react';
-import { useAuthStore } from '../store/useAuthStore';
+import { useAuthStore, savePersistentProfile } from '../store/useAuthStore';
 import { api, ApiError } from '../services/api';
 
 interface EditProfileModalProps {
@@ -82,27 +82,17 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_DIM = 256;
-        let width = img.width;
-        let height = img.height;
+        const TARGET_SIZE = 256;
+        // Center-crop to a clean 1:1 square
+        const minDim = Math.min(img.width, img.height);
+        const sx = (img.width - minDim) / 2;
+        const sy = (img.height - minDim) / 2;
 
-        if (width > height) {
-          if (width > MAX_DIM) {
-            height = Math.round((height * MAX_DIM) / width);
-            width = MAX_DIM;
-          }
-        } else {
-          if (height > MAX_DIM) {
-            width = Math.round((width * MAX_DIM) / height);
-            height = MAX_DIM;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
+        canvas.width = TARGET_SIZE;
+        canvas.height = TARGET_SIZE;
         const ctx = canvas.getContext('2d');
         if (ctx) {
-          ctx.drawImage(img, 0, 0, width, height);
+          ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, TARGET_SIZE, TARGET_SIZE);
           const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
           setAvatar(dataUrl);
           setProfileError(null);
@@ -160,7 +150,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
         console.warn('Backend profile update note:', err);
       }
 
-      // Update auth store & localStorage
+      // Update auth store & persistent user record in localStorage
       const updatedUser = {
         ...user,
         full_name: trimmedName,
@@ -171,10 +161,13 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
       };
 
       setUser(updatedUser);
+      savePersistentProfile(trimmedEmail, updatedUser);
+
       setProfileSuccess('Profile updated successfully!');
+      // Auto-close modal immediately upon saving
       setTimeout(() => {
-        setProfileSuccess(null);
-      }, 3500);
+        onClose();
+      }, 400);
     } catch (err: any) {
       setProfileError(err?.message || 'Failed to save profile changes.');
     } finally {
@@ -229,14 +222,16 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
       // Save locally to maintain persistence across sessions
       localStorage.setItem('milestone_demo_password', newPassword);
+      savePersistentProfile(user.email, { password: newPassword });
 
       setPasswordSuccess('Password changed successfully!');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
+      // Auto-close modal after password update
       setTimeout(() => {
-        setPasswordSuccess(null);
-      }, 3500);
+        onClose();
+      }, 500);
     } catch (err: any) {
       setPasswordError(err?.message || 'Failed to change password.');
     } finally {

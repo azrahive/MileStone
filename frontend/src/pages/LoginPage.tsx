@@ -27,13 +27,13 @@ export const LoginPage: React.FC = () => {
           password,
           full_name: fullName.trim() || undefined,
         });
-        setAuth(res.access_token, res.user);
+        setAuth(res.access_token, res.user, password);
       } else {
         const res = await api.auth.login({
           email: email.trim(),
           password,
         });
-        setAuth(res.access_token, res.user);
+        setAuth(res.access_token, res.user, password);
       }
       navigate('/');
     } catch (err: any) {
