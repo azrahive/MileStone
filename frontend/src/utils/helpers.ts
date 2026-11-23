@@ -20,10 +20,56 @@ export function triggerCompletionConfetti() {
   }
 }
 
+function parseLocalDateValue(value: string): Date | null {
+  const dateOnlyMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (dateOnlyMatch) {
+    const [, year, month, day] = dateOnlyMatch;
+    const date = new Date(Number(year), Number(month) - 1, Number(day));
+    return date.getFullYear() === Number(year) &&
+      date.getMonth() === Number(month) - 1 &&
+      date.getDate() === Number(day)
+      ? date
+      : null;
+  }
+
+  const timestamp = new Date(value);
+  return Number.isNaN(timestamp.getTime()) ? null : timestamp;
+}
+
+export function formatLocalDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function formatLocalDateTime(date: Date): string {
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${formatLocalDate(date)}T${hours}:${minutes}`;
+}
+
+export function formatCalendarDate(value: string): string {
+  const date = parseLocalDateValue(value);
+  return date ? formatLocalDate(date) : '';
+}
+
+export function formatLocalDateTimeInput(value: string): string {
+  const date = parseLocalDateValue(value);
+  return date ? formatLocalDateTime(date) : '';
+}
+
+export function localDateTimeToISOString(value: string): string | undefined {
+  if (!value) return undefined;
+  const date = parseLocalDateValue(value);
+  return date?.toISOString();
+}
+
 export function formatDueDate(dateStr?: string): { text: string; isOverdue: boolean; isToday: boolean } {
   if (!dateStr) return { text: '', isOverdue: false, isToday: false };
 
-  const target = new Date(dateStr);
+  const target = parseLocalDateValue(dateStr);
+  if (!target) return { text: '', isOverdue: false, isToday: false };
   const now = new Date();
   
   const isTodayDate =

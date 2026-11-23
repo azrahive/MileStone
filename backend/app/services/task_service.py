@@ -7,7 +7,9 @@ from app.repositories.tag_repo import TagRepository
 from app.repositories.activity_repo import ActivityRepository
 from app.repositories.recurring_repo import RecurringRepository
 from app.models.task import Task
+from app.models.project import Project
 from app.models.subtask import Subtask
+from app.models.activity import ActivityLog
 from app.schemas.task import TaskCreate, TaskUpdate, TaskResponse, TaskReorder
 from app.schemas.subtask import SubtaskResponse
 from app.schemas.tag import TagResponse
@@ -100,6 +102,14 @@ class TaskService:
         return self._enrich_task(task)
 
     def create(self, task_in: TaskCreate, user_id: str) -> TaskResponse:
+        project = self.db.query(Project).filter(
+            Project.id == task_in.project_id,
+            Project.user_id == user_id,
+            Project.is_archived.is_(False)
+        ).first()
+        if not project:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Active project not found")
+
         tags = []
         if task_in.tag_ids:
             tags = self.tag_repo.get_by_ids(task_in.tag_ids, user_id)
@@ -119,6 +129,15 @@ class TaskService:
         task = self.task_repo.get_by_id(task_id, user_id)
         if not task:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+
+        if "project_id" in task_in.model_fields_set:
+            project = self.db.query(Project).filter(
+                Project.id == task_in.project_id,
+                Project.user_id == user_id,
+                Project.is_archived.is_(False)
+            ).first()
+            if not project:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Active project not found")
 
         old_status = task.status
         old_priority = task.priority
@@ -247,9 +266,13 @@ class TaskService:
             self.archive(task_id, user_id)
         else:
             # Permanent removal
-            title = task.title
+            activity_entity_ids = [task.id] + [subtask.id for subtask in task.subtasks]
+            self.db.query(ActivityLog).filter(
+                ActivityLog.user_id == user_id,
+                ActivityLog.entity_type.in_(["TASK", "SUBTASK"]),
+                ActivityLog.entity_id.in_(activity_entity_ids)
+            ).delete(synchronize_session=False)
             self.task_repo.delete(task)
-            self.activity_repo.log(user_id, "TASK", task_id, "DELETED", title, f"Task '{title}' was permanently deleted")
 
     def _handle_recurrence_on_complete(self, task: Task, user_id: str):
         rec = self.rec_repo.get_by_task_id(task.id, user_id)

@@ -67,6 +67,8 @@ export const AppLayout: React.FC = () => {
 
   const handleTaskCreated = () => {
     queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    queryClient.invalidateQueries({ queryKey: ['calendar'] });
+    queryClient.invalidateQueries({ queryKey: ['tasks', 'overdue'] });
     queryClient.invalidateQueries({ queryKey: ['projects'] });
     queryClient.invalidateQueries({ queryKey: ['analytics'] });
     queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });
@@ -80,6 +82,8 @@ export const AppLayout: React.FC = () => {
   const handleTaskUpdated = (updatedTask: Task) => {
     setSelectedTask(updatedTask);
     queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    queryClient.invalidateQueries({ queryKey: ['calendar'] });
+    queryClient.invalidateQueries({ queryKey: ['tasks', 'overdue'] });
     queryClient.invalidateQueries({ queryKey: ['projects'] });
     queryClient.invalidateQueries({ queryKey: ['analytics'] });
     queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });
@@ -89,11 +93,16 @@ export const AppLayout: React.FC = () => {
     if (!taskToDelete) return;
     try {
       await api.tasks.delete(taskToDelete, false);
+      queryClient.setQueriesData<Task[]>({ queryKey: ['tasks'] }, (tasks) =>
+        tasks?.filter((task) => task.id !== taskToDelete)
+      );
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', 'overdue'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
       queryClient.invalidateQueries({ queryKey: ['archive'] });
       queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       setSelectedTask(null);
       setTaskToDelete(null);
     } catch (e) {
@@ -105,6 +114,7 @@ export const AppLayout: React.FC = () => {
     try {
       await api.tasks.duplicate(taskId);
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
     } catch (e) {
       console.error('Failed to duplicate task:', e);

@@ -76,6 +76,7 @@ export const TasksPage: React.FC = () => {
     mutationFn: (task: Task) => api.tasks.complete(task.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });
@@ -87,6 +88,7 @@ export const TasksPage: React.FC = () => {
     mutationFn: (task: Task) => api.tasks.reopen(task.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });

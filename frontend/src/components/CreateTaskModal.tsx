@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Calendar, Folder, Tag, Clock, Plus } from 'lucide-react';
 import { Project, Priority } from '../types';
 import { api } from '../services/api';
+import { localDateTimeToISOString } from '../utils/helpers';
 
 interface CreateTaskModalProps {
   isOpen: boolean;
@@ -48,10 +49,10 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
       const created = await api.tasks.create({
         title: title.trim(),
         description: description.trim() || undefined,
-        project_id: projectId || undefined,
+        project_id: projectId,
         priority,
         status: 'PENDING',
-        due_date: dueDate ? new Date(dueDate).toISOString() : undefined,
+        due_date: localDateTimeToISOString(dueDate),
         estimated_minutes: estimatedMinutes === '' ? null : Number(estimatedMinutes),
       });
 
@@ -127,11 +128,14 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
                 <Folder className="w-3.5 h-3.5" /> Project
               </label>
               <select
+                required
                 value={projectId}
                 onChange={(e) => setProjectId(e.target.value)}
                 className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 text-slate-800 dark:text-slate-200 text-xs focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="">No Project (Inbox)</option>
+                <option value="" disabled>
+                  Select a project
+                </option>
                 {projects.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.title}

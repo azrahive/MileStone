@@ -8,7 +8,7 @@ from app.schemas.tag import TagResponse
 class TaskBase(BaseModel):
     title: str
     description: Optional[str] = None
-    project_id: Optional[str] = None
+    project_id: str
     priority: Optional[str] = "MEDIUM"      # HIGH, MEDIUM, LOW
     status: Optional[str] = "PENDING"       # PENDING, IN_PROGRESS, COMPLETED, ON_HOLD, CANCELLED
     start_date: Optional[datetime] = None

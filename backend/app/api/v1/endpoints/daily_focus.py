@@ -7,6 +7,7 @@ from app.api.deps import get_current_user
 from app.models.user import User
 from app.models.daily_focus import DailyFocus
 from app.models.task import Task
+from app.models.project import Project
 from app.schemas.daily_focus import DailyFocusCreate, DailyFocusResponse, DailyFocusSummary
 from app.schemas.task import TaskResponse
 from app.repositories.daily_focus_repo import DailyFocusRepository
@@ -64,7 +65,15 @@ def add_to_daily_focus(
     current_user: User = Depends(get_current_user)
 ):
     focus_date = focus_in.focus_date or date.today()
-    task = db.query(Task).filter(Task.id == focus_in.task_id, Task.user_id == current_user.id).first()
+    task = db.query(Task).join(
+        Project, Task.project_id == Project.id
+    ).filter(
+        Task.id == focus_in.task_id,
+        Task.user_id == current_user.id,
+        Task.is_archived.is_(False),
+        Project.user_id == current_user.id,
+        Project.is_archived.is_(False)
+    ).first()
     if not task:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
 

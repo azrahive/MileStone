@@ -73,6 +73,7 @@ export const ProjectDetailPage: React.FC = () => {
     mutationFn: (task: Task) => api.tasks.complete(task.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['project', id] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
@@ -84,17 +85,26 @@ export const ProjectDetailPage: React.FC = () => {
     mutationFn: (task: Task) => api.tasks.reopen(task.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['project', id] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
     },
   });
 
-  // Delete project mutation (soft-deletes to Archive Vault)
+  // Project deletion permanently removes its tasks as well.
   const deleteProjectMutation = useMutation({
-    mutationFn: () => api.projects.delete(id!, false),
+    mutationFn: () => api.projects.delete(id!),
     onSuccess: () => {
+      queryClient.setQueriesData<Task[]>({ queryKey: ['tasks'] }, (tasks) =>
+        tasks?.filter((task) => task.project_id !== id)
+      );
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', 'overdue'] });
+      queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['project'] });
       queryClient.invalidateQueries({ queryKey: ['archive'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
       navigate('/projects');
@@ -290,13 +300,13 @@ export const ProjectDetailPage: React.FC = () => {
         )}
       </div>
 
-      {/* Delete/Archive Project Dialog */}
+      {/* Permanent project delete confirmation */}
       <ConfirmDialog
         isOpen={isDeleteConfirmOpen}
-        title="Move Project to Archive Vault?"
-        message={`Are you sure you want to archive "${project.title}"? It will be safely stored in the Archive Vault, where you can restore it back anytime.`}
-        confirmLabel="Move to Archive Vault"
-        isDestructive={false}
+        title="Permanently Delete Project?"
+        message={`Are you sure you want to permanently delete "${project.title}" and all of its tasks? This action cannot be undone.`}
+        confirmLabel="Delete Project"
+        isDestructive
         onConfirm={() => deleteProjectMutation.mutate()}
         onCancel={() => setIsDeleteConfirmOpen(false)}
       />

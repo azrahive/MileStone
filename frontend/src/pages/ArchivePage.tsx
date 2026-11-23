@@ -38,6 +38,10 @@ export const ArchivePage: React.FC = () => {
     mutationFn: (id: string) => api.projects.restore(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ['archive'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', 'overdue'] });
+      queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
       showNotification('Project restored back to active workflow!');
@@ -49,17 +53,28 @@ export const ArchivePage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['archive'] });
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', 'overdue'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
       showNotification('Task restored back to active workflow!');
     },
   });
 
   const deleteProjectMutation = useMutation({
-    mutationFn: (id: string) => api.projects.delete(id, true), // Permanent delete
-    onSuccess: () => {
+    mutationFn: (id: string) => api.projects.delete(id),
+    onSuccess: (_, id) => {
+      queryClient.setQueriesData<Task[]>({ queryKey: ['tasks'] }, (tasks) =>
+        tasks?.filter((task) => task.project_id !== id)
+      );
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', 'overdue'] });
+      queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['archive'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['project'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
       setItemToDelete(null);
       showNotification('Project permanently deleted.');
@@ -68,9 +83,16 @@ export const ArchivePage: React.FC = () => {
 
   const deleteTaskMutation = useMutation({
     mutationFn: (id: string) => api.tasks.delete(id, true), // Permanent delete
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['archive'] });
+    onSuccess: (_, id) => {
+      queryClient.setQueriesData<Task[]>({ queryKey: ['tasks'] }, (tasks) =>
+        tasks?.filter((task) => task.id !== id)
+      );
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', 'overdue'] });
+      queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
+      queryClient.invalidateQueries({ queryKey: ['archive'] });
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
       setItemToDelete(null);
       showNotification('Task permanently deleted.');

@@ -1,10 +1,12 @@
 from typing import List, Optional
+from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from app.repositories.project_repo import ProjectRepository
 from app.repositories.activity_repo import ActivityRepository
 from app.models.task import Task
 from app.models.project import Project
+from app.models.activity import ActivityLog
 from app.schemas.project import ProjectCreate, ProjectUpdate, ProjectResponse
 from app.schemas.category import CategoryResponse
 
@@ -133,22 +135,33 @@ class ProjectService:
         )
         return self._enrich_project(restored)
 
-    def delete(self, project_id: str, user_id: str, permanent: bool = False) -> None:
+    def delete(self, project_id: str, user_id: str) -> None:
         project = self.project_repo.get_by_id(project_id, user_id)
         if not project:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
-        if not permanent:
-            # Soft-delete to archive vault
-            self.archive(project_id, user_id)
-        else:
-            # Permanent removal
-            title = project.title
-            self.project_repo.delete(project)
-            self.activity_repo.log(
-                user_id=user_id,
-                entity_type="PROJECT",
-                entity_id=project_id,
-                entity_title=title,
-                action="DELETED",
-                details=f"Project '{title}' was permanently deleted"
+        tasks = list(project.tasks)
+        task_ids = [task.id for task in tasks]
+        subtask_ids = [
+            subtask.id
+            for task in tasks
+            for subtask in task.subtasks
+        ]
+        task_activity_entity_ids = task_ids + subtask_ids
+        activity_filters = [
+            and_(
+                ActivityLog.entity_type == "PROJECT",
+                ActivityLog.entity_id == project_id
             )
+        ]
+        if task_activity_entity_ids:
+            activity_filters.append(and_(
+                ActivityLog.entity_type.in_(["TASK", "SUBTASK"]),
+                ActivityLog.entity_id.in_(task_activity_entity_ids)
+            ))
+        self.db.query(ActivityLog).filter(
+            ActivityLog.user_id == user_id,
+            or_(*activity_filters)
+        ).delete(synchronize_session=False)
+        for task in tasks:
+            self.db.delete(task)
+        self.project_repo.delete(project)

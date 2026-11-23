@@ -38,12 +38,18 @@ source .venv/bin/activate
 # Install dependencies (if not already installed)
 pip install -r requirements.txt
 
-# Run migrations
+# Optional standalone cleanup for archived projects and stale task data
+python3 -m scripts.cleanup_orphaned_project_tasks
+
+# Run migrations (also cleans stale tasks and enforces project ownership)
 python3 -m alembic upgrade head
 
 # Start FastAPI server
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
+
+The cleanup permanently deletes archived projects and their tasks, tasks with a
+missing or mismatched project, and stale project/task/subtask activity logs.
 - API Base: `http://localhost:8000`
 - Interactive Swagger UI Docs: `http://localhost:8000/docs`
 - Redoc Documentation: `http://localhost:8000/redoc`

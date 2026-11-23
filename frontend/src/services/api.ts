@@ -156,8 +156,8 @@ export const api = {
       request<Project>(`/projects/${id}/archive`, { method: 'POST' }),
     restore: (id: string) =>
       request<Project>(`/projects/${id}/restore`, { method: 'POST' }),
-    delete: (id: string, permanent: boolean = false) =>
-      request<void>(`/projects/${id}${permanent ? '?permanent=true' : ''}`, { method: 'DELETE' }),
+    delete: (id: string) =>
+      request<void>(`/projects/${id}`, { method: 'DELETE' }),
   },
 
   // Tasks
@@ -187,7 +187,8 @@ export const api = {
     },
     getById: (id: string) => request<Task>(`/tasks/${id}`),
     create: (
-      data: Omit<Partial<Task>, 'estimated_minutes'> & {
+      data: Omit<Partial<Task>, 'estimated_minutes' | 'project_id'> & {
+        project_id: string;
         estimated_minutes?: number | null;
         tag_ids?: string[];
       }

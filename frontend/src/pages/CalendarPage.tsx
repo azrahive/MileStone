@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useOutletContext } from 'react-router-dom';
 import {
   ChevronLeft,
@@ -11,9 +11,10 @@ import {
 import { api } from '../services/api';
 import { Task, Project } from '../types';
 import { CreateTaskModal } from '../components/CreateTaskModal';
-import { getPriorityBadge } from '../utils/helpers';
+import { formatCalendarDate, formatLocalDate, getPriorityBadge } from '../utils/helpers';
 
 export const CalendarPage: React.FC = () => {
+  const queryClient = useQueryClient();
   const { projects, onSelectTask } = useOutletContext<{
     projects: Project[];
     onSelectTask: (t: Task) => void;
@@ -50,9 +51,9 @@ export const CalendarPage: React.FC = () => {
   const tasksByDay: Record<number, Task[]> = {};
   for (const t of monthTasks) {
     if (t.due_date) {
-      const d = new Date(t.due_date);
-      if (d.getMonth() === month && d.getFullYear() === year) {
-        const dayNum = d.getDate();
+      const localDate = formatCalendarDate(t.due_date);
+      if (localDate.startsWith(`${year}-${String(month + 1).padStart(2, '0')}-`)) {
+        const dayNum = Number(localDate.slice(-2));
         if (!tasksByDay[dayNum]) tasksByDay[dayNum] = [];
         tasksByDay[dayNum].push(t);
       }
@@ -61,9 +62,7 @@ export const CalendarPage: React.FC = () => {
 
   const handleCellClick = (dayNumber: number) => {
     const target = new Date(year, month, dayNumber, 9, 0);
-    // Format YYYY-MM-DDTHH:mm
-    const localIso = target.toISOString().slice(0, 16);
-    setSelectedDateForCreate(localIso);
+    setSelectedDateForCreate(`${formatLocalDate(target)}T09:00`);
   };
 
   const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -205,7 +204,12 @@ export const CalendarPage: React.FC = () => {
         projects={projects}
         defaultDueDate={selectedDateForCreate || ''}
         onClose={() => setSelectedDateForCreate(null)}
-        onCreated={() => setSelectedDateForCreate(null)}
+        onCreated={() => {
+          queryClient.invalidateQueries({ queryKey: ['calendar'] });
+          queryClient.invalidateQueries({ queryKey: ['tasks'] });
+          queryClient.invalidateQueries({ queryKey: ['analytics'] });
+          setSelectedDateForCreate(null);
+        }}
       />
     </div>
   );

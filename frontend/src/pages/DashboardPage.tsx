@@ -74,6 +74,7 @@ export const DashboardPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
     },
@@ -85,6 +86,7 @@ export const DashboardPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
     },

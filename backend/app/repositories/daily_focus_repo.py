@@ -2,6 +2,8 @@ from typing import List, Optional
 from datetime import date
 from sqlalchemy.orm import Session
 from app.models.daily_focus import DailyFocus
+from app.models.project import Project
+from app.models.task import Task
 
 
 class DailyFocusRepository:
@@ -9,9 +11,17 @@ class DailyFocusRepository:
         self.db = db
 
     def get_by_date(self, user_id: str, focus_date: date) -> List[DailyFocus]:
-        return self.db.query(DailyFocus).filter(
+        return self.db.query(DailyFocus).join(
+            Task, DailyFocus.task_id == Task.id
+        ).join(
+            Project, Task.project_id == Project.id
+        ).filter(
             DailyFocus.user_id == user_id,
-            DailyFocus.focus_date == focus_date
+            DailyFocus.focus_date == focus_date,
+            Task.user_id == user_id,
+            Task.is_archived.is_(False),
+            Project.user_id == user_id,
+            Project.is_archived.is_(False)
         ).order_by(DailyFocus.sort_order.asc()).all()
 
     def add(self, user_id: str, task_id: str, focus_date: date) -> DailyFocus:

@@ -1,9 +1,13 @@
 def test_subtask_workflow(client, auth_headers):
-    # Create task
+    project_id = client.post(
+        "/api/v1/projects",
+        headers=auth_headers,
+        json={"title": "Subtask Project"}
+    ).json()["id"]
     task_resp = client.post(
         "/api/v1/tasks",
         headers=auth_headers,
-        json={"title": "Master Task"}
+        json={"title": "Master Task", "project_id": project_id}
     )
     task_id = task_resp.json()["id"]
 

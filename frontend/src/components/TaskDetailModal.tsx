@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Task, Project, Priority, TaskStatus, Subtask } from '../types';
 import { api } from '../services/api';
+import { formatLocalDateTimeInput, localDateTimeToISOString } from '../utils/helpers';
 
 interface TaskDetailModalProps {
   task: Task | null;
@@ -43,7 +44,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
   const [priority, setPriority] = useState<Priority>(task.priority);
   const [status, setStatus] = useState<TaskStatus>(task.status);
   const [dueDate, setDueDate] = useState<string>(
-    task.due_date ? task.due_date.slice(0, 16) : ''
+    task.due_date ? formatLocalDateTimeInput(task.due_date) : ''
   );
   const [estimatedMinutes, setEstimatedMinutes] = useState<number>(
     task.estimated_minutes || 0
@@ -64,7 +65,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
     setProjectId(task.project_id || '');
     setPriority(task.priority);
     setStatus(task.status);
-    setDueDate(task.due_date ? task.due_date.slice(0, 16) : '');
+    setDueDate(task.due_date ? formatLocalDateTimeInput(task.due_date) : '');
     setEstimatedMinutes(task.estimated_minutes || 0);
     setActualMinutes(task.actual_minutes || 0);
     setNotes(task.notes || '');
@@ -209,14 +210,14 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                 <Folder className="w-4 h-4" /> Project
               </span>
               <select
+                required
                 value={projectId}
                 onChange={(e) => {
                   setProjectId(e.target.value);
-                  handleSaveField({ project_id: e.target.value || undefined });
+                  handleSaveField({ project_id: e.target.value });
                 }}
                 className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1 text-slate-800 dark:text-slate-200 text-xs focus:ring-1 focus:ring-indigo-500"
               >
-                <option value="">No Project</option>
                 {projects.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.title}
@@ -278,7 +279,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                 onChange={(e) => {
                   setDueDate(e.target.value);
                   handleSaveField({
-                    due_date: e.target.value ? new Date(e.target.value).toISOString() : undefined,
+                    due_date: localDateTimeToISOString(e.target.value),
                   });
                 }}
                 className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-slate-800 dark:text-slate-200 text-xs focus:ring-1 focus:ring-indigo-500"

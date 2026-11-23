@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from sqlalchemy import or_, desc, asc
 from sqlalchemy.orm import Session
 from app.models.task import Task
+from app.models.project import Project
 from app.models.tag import Tag
 from app.schemas.task import TaskCreate, TaskUpdate
 
@@ -28,7 +29,13 @@ class TaskRepository:
         include_archived: bool = False,
         sort_by: Optional[str] = "order_asc"
     ) -> List[Task]:
-        query = self.db.query(Task).filter(Task.user_id == user_id)
+        query = self.db.query(Task).join(
+            Project, Task.project_id == Project.id
+        ).filter(
+            Task.user_id == user_id,
+            Project.user_id == user_id,
+            Project.is_archived.is_(False)
+        )
 
         if not include_archived:
             query = query.filter(Task.is_archived.is_(False))
@@ -87,7 +94,14 @@ class TaskRepository:
         return query.all()
 
     def get_by_id(self, task_id: str, user_id: str) -> Optional[Task]:
-        return self.db.query(Task).filter(Task.id == task_id, Task.user_id == user_id).first()
+        return self.db.query(Task).join(
+            Project, Task.project_id == Project.id
+        ).filter(
+            Task.id == task_id,
+            Task.user_id == user_id,
+            Project.user_id == user_id,
+            Project.is_archived.is_(False)
+        ).first()
 
     def create(self, task_in: TaskCreate, user_id: str, tags: List[Tag] = None) -> Task:
         task = Task(

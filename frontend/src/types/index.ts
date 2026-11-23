@@ -44,7 +44,7 @@ export interface Subtask {
 export interface Task {
   id: string;
   user_id: string;
-  project_id?: string;
+  project_id: string;
   title: string;
   description?: string;
   priority: Priority;

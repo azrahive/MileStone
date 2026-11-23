@@ -171,9 +171,18 @@ class BackupService:
 
         # Restore Tasks
         task_id_map = {}
+        tasks_restored = 0
         for t in data.tasks:
             existing_t = self.db.query(Task).filter(Task.id == t["id"]).first()
             project_id = proj_id_map.get(t.get("project_id"))
+            project = self.db.query(Project).filter(
+                Project.id == project_id,
+                Project.user_id == user.id,
+                Project.is_archived.is_(False)
+            ).first() if project_id else None
+            if not project:
+                continue
+
             if not existing_t:
                 new_t = Task(
                     id=t["id"],
@@ -193,6 +202,7 @@ class BackupService:
                 task_id_map[t["id"]] = new_t.id
             else:
                 task_id_map[t["id"]] = existing_t.id
+            tasks_restored += 1
         self.db.commit()
 
         # Restore Subtasks
@@ -216,6 +226,6 @@ class BackupService:
             "message": "Data successfully restored",
             "categories_restored": len(data.categories),
             "projects_restored": len(data.projects),
-            "tasks_restored": len(data.tasks),
+            "tasks_restored": tasks_restored,
             "subtasks_restored": len(data.subtasks)
         }

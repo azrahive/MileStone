@@ -12,6 +12,7 @@ import {
 import { api } from '../services/api';
 import { Task, Project } from '../types';
 import { TaskCard } from '../components/TaskCard';
+import { formatLocalDateTime, localDateTimeToISOString } from '../utils/helpers';
 
 export const OverduePage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -35,6 +36,8 @@ export const OverduePage: React.FC = () => {
       api.overdue.reschedule(taskId, newDate),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', 'overdue'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
       setRescheduleTask(null);
     },
@@ -45,6 +48,7 @@ export const OverduePage: React.FC = () => {
     mutationFn: (task: Task) => api.tasks.complete(task.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
     },
   });
@@ -54,17 +58,21 @@ export const OverduePage: React.FC = () => {
     const target = new Date();
     target.setDate(target.getDate() + daysOffset);
     target.setHours(17, 0, 0, 0); // Default to 5 PM
+    const newDate = localDateTimeToISOString(formatLocalDateTime(target));
+    if (!newDate) return;
     rescheduleMutation.mutate({
       taskId: rescheduleTask.id,
-      newDate: target.toISOString(),
+      newDate,
     });
   };
 
   const handleCustomReschedule = () => {
     if (!rescheduleTask || !customDate) return;
+    const newDate = localDateTimeToISOString(customDate);
+    if (!newDate) return;
     rescheduleMutation.mutate({
       taskId: rescheduleTask.id,
-      newDate: new Date(customDate).toISOString(),
+      newDate,
     });
   };
 

@@ -14,7 +14,7 @@ import {
   MoreVertical,
 } from 'lucide-react';
 import { api } from '../services/api';
-import { Project, Category, Priority } from '../types';
+import { Project, Category, Priority, Task } from '../types';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { getPriorityBadge } from '../utils/helpers';
 
@@ -45,16 +45,28 @@ export const ProjectsPage: React.FC = () => {
   const archiveMutation = useMutation({
     mutationFn: (id: string) => api.projects.archive(id),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', 'overdue'] });
+      queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
     },
   });
 
-  // Delete mutation (soft-deletes to Archive Vault)
+  // Delete mutation permanently removes the project and its tasks.
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => api.projects.delete(id, false),
-    onSuccess: () => {
+    mutationFn: (id: string) => api.projects.delete(id),
+    onSuccess: (_, id) => {
+      queryClient.setQueriesData<Task[]>({ queryKey: ['tasks'] }, (tasks) =>
+        tasks?.filter((task) => task.project_id !== id)
+      );
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', 'overdue'] });
+      queryClient.invalidateQueries({ queryKey: ['dailyFocus'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['project'] });
       queryClient.invalidateQueries({ queryKey: ['archive'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
       setProjectToDelete(null);
@@ -253,13 +265,13 @@ export const ProjectsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Delete/Archive Confirmation Dialog */}
+      {/* Permanent delete confirmation */}
       <ConfirmDialog
         isOpen={!!projectToDelete}
-        title="Move Project to Archive Vault?"
-        message="This project and its tasks will be moved to the Archive Vault and hidden from your active projects list. You can restore it back anytime."
-        confirmLabel="Move to Archive Vault"
-        isDestructive={false}
+        title="Permanently Delete Project?"
+        message="This project and all its tasks will be permanently deleted. This action cannot be undone."
+        confirmLabel="Delete Project"
+        isDestructive
         onConfirm={() => projectToDelete && deleteMutation.mutate(projectToDelete)}
         onCancel={() => setProjectToDelete(null)}
       />

@@ -26,7 +26,7 @@ class Task(Base):
 
     id = Column(String(36), primary_key=True, default=generate_uuid, index=True)
     user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    project_id = Column(String(36), ForeignKey("projects.id", ondelete="SET NULL"), nullable=True, index=True)
+    project_id = Column(String(36), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False, index=True)
     title = Column(String(255), nullable=False, index=True)
     description = Column(Text, nullable=True)
     priority = Column(String(20), default="MEDIUM", index=True)  # HIGH, MEDIUM, LOW

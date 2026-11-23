@@ -1,7 +1,6 @@
 from datetime import datetime, timezone, timedelta, date
 from typing import List
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 from app.models.task import Task
 from app.models.project import Project
 from app.schemas.analytics import (
@@ -32,9 +31,13 @@ class AnalyticsService:
         ).count()
 
         # Tasks counts
-        base_task_query = self.db.query(Task).filter(
+        base_task_query = self.db.query(Task).join(
+            Project, Task.project_id == Project.id
+        ).filter(
             Task.user_id == user_id,
-            Task.is_archived.is_(False)
+            Task.is_archived.is_(False),
+            Project.user_id == user_id,
+            Project.is_archived.is_(False)
         )
 
         total_tasks = base_task_query.count()
@@ -64,14 +67,12 @@ class AnalyticsService:
             day_start = datetime(day_target.year, day_target.month, day_target.day, 0, 0, 0, tzinfo=timezone.utc)
             day_end = datetime(day_target.year, day_target.month, day_target.day, 23, 59, 59, tzinfo=timezone.utc)
 
-            completed_count = self.db.query(Task).filter(
-                Task.user_id == user_id,
+            completed_count = base_task_query.filter(
                 Task.completion_date >= day_start,
                 Task.completion_date <= day_end
             ).count()
 
-            created_count = self.db.query(Task).filter(
-                Task.user_id == user_id,
+            created_count = base_task_query.filter(
                 Task.created_at >= day_start,
                 Task.created_at <= day_end
             ).count()
